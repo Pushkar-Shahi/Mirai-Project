@@ -1,0 +1,26 @@
+# Secrets: copy .env.example to .env and keep .env out of Git.
+.env
+.env.*
+!.env.example
+
+# Local runtime data (PostgreSQL cluster, uploads, generated JWT secret)
+.local/
+# Portal builds (frontend/apps/<portal>/dist) are produced by Cloudflare Pages at deploy time.
+dist/
+
+# Frontend test tooling
+node_modules/
+frontend/.e2e-builds/
+frontend/playwright-report/
+frontend/test-results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
