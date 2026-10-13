@@ -34,11 +34,7 @@ async function boot(portal){await loadConfig();
  let user;
  try{user=await fetchSessionUser(token)}
  catch(e){
-  // 401: the API client has already signed out and said the session ended.
-  if(e.status===401)return;
-  // Network failure: keep the stored token for a later reload, but start signed out.
-  if(!e.status){setSession(null,null);return showLogin(portal,e.message)}
-  clearSession(portal);return showLogin(portal,e.message)}
+  clearSession(portal);return showLogin(portal,e.message||'Session expired. Please sign in again.')}
  if(!roleMatches(portal,user)){clearSession(portal);return roleMismatchView(portal,user,()=>signOut(portal))}
  if(handed)storeToken(portal,handed);
  setSession(token,user);shell(portal,()=>signOut(portal))}

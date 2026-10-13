@@ -1,34 +1,155 @@
-import {runtimeConfig} from './shared/config/runtime-config.js';
 import {portalForRole} from './shared/config/portals.js';
-import {api,API} from './shared/core/api.js';
-import {h} from './shared/core/dom.js';
-import {themeButton} from './shared/core/theme.js';
-import {frm} from './shared/components/forms.js';
-import {goToRolePortal} from './shared/auth/session.js';
+import {api, API} from './shared/core/api.js';
+import {theme, setTheme} from './shared/core/theme.js';
 
-// Default API for remote/cloud deployments (Cloudflare Pages)
-if (typeof window !== 'undefined' && !localStorage.getItem('api')) {
-  if (location.hostname && !['localhost', '127.0.0.1'].includes(location.hostname) && !location.hostname.startsWith('192.168.') && !location.hostname.startsWith('10.')) {
-    localStorage.setItem('api', 'https://club-tracker-demo-api.onrender.com');
+// Auto-clean stale or remote Render API on local dev servers
+if (typeof window !== 'undefined') {
+  const isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(location.hostname) || location.port === '5500';
+  if (isLocal && localStorage.getItem('api')?.includes('onrender.com')) {
+    localStorage.removeItem('api');
   }
 }
 
-// Local development hub: one sign-in. The account's role chooses the website.
-const mount=document.getElementById('hub-login');
-if(mount){
- const f=frm([['identifier','Email or student ID','text',null,{autocomplete:'username'}],['password','Password','password',null,{autocomplete:'current-password'}]],'Open my portal',async d=>{
-  const r=await api('POST','/auth/login',{identifier:d.identifier.trim(),password:d.password});
-  const home=portalForRole(r.user.role);
-  if(!home||!goToRolePortal(r.user,r.access_token,{url:`apps/${home.id}/`}))
-   throw new Error('This account does not have a portal yet.');
- },0,{draft:false});
- const demo=runtimeConfig.demoLogins;
- mount.replaceWith(h('div',{class:'card login-card hub-login-card'},
-  h('div',{class:'spotlight-head'},h('div',{class:'page-eyebrow'},'Sign in'),themeButton()),
-  h('h2',{},'Use your account'),
-  h('p',{},'Campus manager credentials open the campus manager site. Super admin credentials open the super admin site. Student, advisor and coordinator accounts work the same way.'),
-  f,
-  demo.length?h('div',{class:'demo-area'},h('span',{},`Demo accounts · ${runtimeConfig.demoPassword}`),
-   h('div',{class:'demo-buttons'},demo.map(([e,,l])=>h('button',{type:'button',class:'s',onclick:()=>{f.identifier.value=e;f.password.value=runtimeConfig.demoPassword}},l)))):null,
-  runtimeConfig.allowApiOverride?h('details',{class:'api-setting'},h('summary',{},'Connection settings'),h('label',{},'API address',h('input',{value:API(),onchange:e=>{try{localStorage.setItem('api',e.target.value.trim())}catch{}}}))):null));
+function init() {
+  const form = document.getElementById('login-form');
+  const idInput = document.getElementById('identifier');
+  const pwInput = document.getElementById('password');
+  const pwToggleBtn = document.getElementById('pw-toggle-btn');
+  const statusMsg = document.getElementById('status-msg');
+  const submitBtn = document.getElementById('submit-btn');
+  const themeBtn = document.getElementById('theme-toggle');
+  const apiInput = document.getElementById('api-input');
+
+  // Password visibility toggle
+  if (pwToggleBtn && pwInput) {
+    pwToggleBtn.onclick = (e) => {
+      e.preventDefault();
+      const isPass = pwInput.type === 'password';
+      pwInput.type = isPass ? 'text' : 'password';
+      pwToggleBtn.textContent = isPass ? 'Hide' : 'Show';
+    };
+  }
+
+  // Theme toggle
+  if (themeBtn) {
+    const updateThemeIcon = () => {
+      const isDark = theme() === 'dark';
+      themeBtn.textContent = isDark ? '☀' : '☾';
+      themeBtn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+      themeBtn.setAttribute('aria-label', themeBtn.title);
+      themeBtn.setAttribute('aria-pressed', String(isDark));
+    };
+    updateThemeIcon();
+    themeBtn.onclick = (e) => {
+      e.preventDefault();
+      setTheme(theme() === 'dark' ? 'light' : 'dark');
+      updateThemeIcon();
+    };
+  }
+
+  // API address setting
+  if (apiInput) {
+    apiInput.value = API();
+    apiInput.onchange = (e) => {
+      try {
+        const val = e.target.value.trim();
+        if (val) localStorage.setItem('api', val);
+        else localStorage.removeItem('api');
+        location.reload();
+      } catch {}
+    };
+  }
+
+  // Demo buttons
+  const demoButtons = document.querySelectorAll('.demo-buttons-grid button');
+  demoButtons.forEach((btn) => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      const email = btn.getAttribute('data-email');
+      if (email && idInput && pwInput) {
+        idInput.value = email;
+        pwInput.value = 'password123';
+        if (statusMsg) {
+          statusMsg.style.display = 'none';
+          statusMsg.className = 'login-status-msg';
+        }
+        if (submitBtn) {
+          submitBtn.focus();
+        }
+      }
+    };
+  });
+
+  // Direct login execution
+  async function executeLogin(identifier, password) {
+    if (!identifier || !password) {
+      if (statusMsg) {
+        statusMsg.className = 'login-status-msg error';
+        statusMsg.textContent = 'Please enter both identifier and password.';
+        statusMsg.style.display = 'block';
+      }
+      return;
+    }
+
+    if (statusMsg) {
+      statusMsg.className = 'login-status-msg';
+      statusMsg.style.display = 'none';
+    }
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Opening dashboard...';
+    }
+
+    try {
+      const r = await api('POST', '/auth/login', {
+        identifier: identifier.trim(),
+        password: password
+      });
+
+      const home = portalForRole(r.user.role);
+      if (!home) {
+        throw new Error(`Role "${r.user.role}" does not have an assigned portal.`);
+      }
+
+      // Store token in sessionStorage for this portal
+      try {
+        sessionStorage.setItem(`mirai:${home.id}:token`, r.access_token);
+      } catch {}
+
+      if (statusMsg) {
+        statusMsg.className = 'login-status-msg success';
+        statusMsg.textContent = `Welcome, ${r.user.name || r.user.role}! Opening your dashboard...`;
+        statusMsg.style.display = 'block';
+      }
+
+      // Directly open role dashboard carrying the handoff token
+      const dest = new URL(`apps/${home.id}/`, location.href);
+      dest.hash = 'handoff=' + encodeURIComponent(r.access_token);
+      location.replace(dest.href);
+    } catch (err) {
+      if (statusMsg) {
+        statusMsg.className = 'login-status-msg error';
+        statusMsg.textContent = err.message || 'Login failed. Please check credentials.';
+        statusMsg.style.display = 'block';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue to workspace';
+      }
+    }
+  }
+
+  // Form submit
+  if (form) {
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      executeLogin(idInput.value.trim(), pwInput.value);
+    };
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
