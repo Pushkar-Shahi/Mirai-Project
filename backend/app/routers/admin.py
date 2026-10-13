@@ -116,8 +116,6 @@ async def create_user(
     student_code = body.student_code
     if body.role == "student" and not student_code:
         raise HTTPException(422, "student_code is required for students")
-    if body.role != "student" and student_code:
-        raise HTTPException(422, "student_code is only valid for students")
 
     try:
         row = await conn.fetchrow(
