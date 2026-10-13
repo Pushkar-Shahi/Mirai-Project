@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mirai Role Portals Hub · Localhost</title>
+  <meta name="description" content="Central Hub for Mirai Club Activities Tracker Role Portals">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    // Theme initialization matching Mirai portals
+    try {
+      const saved = localStorage.getItem('mirai-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved : (prefersDark ? 'dark' : 'light');
+    } catch (e) {}
+  </script>
+  <style>
+    :root {
+      --bg: #f5f7fc;
+      --surface: #ffffff;
+      --surface-2: #f8f9fd;
+      --surface-hover: #f1f4fb;
+      --ink: #111827;
+      --ink-muted: #64748b;
+      --border: #e2e8f0;
+      --border-focus: #5a63e8;
+      --brand: #5a63e8;
+      --brand-hover: #4852df;
+      --brand-light: #eef0ff;
+      --brand-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      --mint: #10b981;
+      --mint-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --rose: #f43f5e;
+      --rose-light: #ffe4e6;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 20px 45px rgba(15, 23, 42, 0.09);
+      --card-radius: 20px;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0b0f17;
+      --surface: #121826;
+      --surface-2: #192233;
+      --surface-hover: #1e293e;
+      --ink: #f1f5f9;
+      --ink-muted: #94a3b8;
+      --border: #232d42;
+      --border-focus: #818cf8;
+      --brand: #6366f1;
+      --brand-hover: #818cf8;
+      --brand-light: #1e1b4b;
+      --mint: #34d399;
+      --mint-light: #064e3b;
+      --amber: #fbbf24;
+      --amber-light: #451a03;
+      --purple: #a78bfa;
+      --purple-light: #2e1065;
+      --rose: #fb7185;
+      --rose-light: #4c0519;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Ambient background glowing orbs */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .orb-1 {
+      position: absolute;
+      top: -10vw;
+      right: -10vw;
+      width: 45vw;
+      height: 45vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+    .orb-2 {
+      position: absolute;
+      bottom: -10vw;
+      left: -10vw;
+      width: 50vw;
+      height: 50vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.09) 0%, transparent 70%);
+      filter: blur(70px);
+    }
+
+    /* Header Nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(var(--bg), 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-content {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--brand-gradient);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(99, 102, 241, 0.3);
+    }
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--brand-light);
+      color: var(--brand);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 99px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 3px var(--mint-light);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.7; }
+    }
+
+    .theme-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .theme-toggle-btn:hover {
+      background: var(--surface-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 44px 24px 72px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto 48px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 99px;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(34px, 4.5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.12;
+      margin-bottom: 16px;
+    }
+    .hero h1 span {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* API Monitor Bar */
+    .api-status-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow-sm);
+    }
+    .api-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .api-endpoint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+    .api-check-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .api-check-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    /* Grid of Portals */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .portal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .portal-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .icon-student { background: #e0e7ff; color: #4338ca; }
+    .icon-advisor { background: #d1fae5; color: #047857; }
+    .icon-coordinator { background: #fef3c7; color: #b45309; }
+    .icon-campus { background: #ede9fe; color: #6d28d9; }
+    .icon-super { background: #ffe4e6; color: #be123c; }
+
+    :root[data-theme="dark"] .icon-student { background: #1e1b4b; color: #a5b4fc; }
+    :root[data-theme="dark"] .icon-advisor { background: #064e3b; color: #6ee7b7; }
+    :root[data-theme="dark"] .icon-coordinator { background: #451a03; color: #fde68a; }
+    :root[data-theme="dark"] .icon-campus { background: #2e1065; color: #c4b5fd; }
+    :root[data-theme="dark"] .icon-super { background: #4c0519; color: #fca5a5; }
+
+    .role-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 99px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+    }
+
+    .portal-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .portal-role-desc {
+      font-size: 13px;
+      color: var(--brand);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .portal-desc {
+      font-size: 14px;
+      color: var(--ink-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .portal-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+    .feature-chip {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      color: var(--ink-muted);
+      border: 1px solid var(--border);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .launch-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: var(--brand-gradient);
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+      transition: var(--transition);
+    }
+    .launch-btn:hover {
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+    }
+    .copy-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      transition: var(--transition);
+    }
+    .copy-btn:hover {
+      background: var(--surface-hover);
+      color: var(--ink);
+      border-color: var(--brand);
+    }
+
+    /* Information section */
+    .info-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+    .info-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .info-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .info-item {
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+    .info-item h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--brand);
+    }
+    .info-item p {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+
+    @media (max-width: 640px) {
+      .portal-grid {
+        grid-template-columns: 1fr;
+      }
+      .header-content {
+        padding: 12px 16px;
+      }
+      main {
+        padding: 28px 16px 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow">
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+  </div>
+
+  <header>
+    <div class="header-content">
+      <a href="/" class="brand-wrap">
+        <div class="brand-logo">M</div>
+        <div>
+          <div class="brand-title">
+            Mirai Hub
+            <span class="brand-tag">Localhost</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <div class="status-badge" id="backendBadge">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="backendStatusText">Checking Backend...</span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle dark/light theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <span>⚡</span> Local Development & Demonstration Environment
+      </div>
+      <h1>Mirai Club Portals <span>Hub</span></h1>
+      <p>
+        Full multi-portal platform for student organizations, campus management, faculty advising, and activity approvals. Select any portal below to launch directly in your browser.
+      </p>
+    </div>
+
+    <!-- API Health Card -->
+    <div class="api-status-card">
+      <div class="api-info">
+        <strong>Backend API:</strong>
+        <span class="api-endpoint">https://club-tracker-demo-api.onrender.com</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span id="apiLatency" style="font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace;">Ping: --ms</span>
+        <button class="api-check-btn" id="pingBtn">
+          <span>🔄</span> Test Connectivity
+        </button>
+      </div>
+    </div>
+
+    <!-- 5 Portals Grid -->
+    <div class="portal-grid">
+      <!-- 1. Student Portal -->
+      <div class="portal-card" id="card-student">
+        <div>
+          <div class="card-top">
+            <div class="portal-icon icon-student">🎓</div>
+            <span class="role-badge">Role: student</span>
+          </div>
+          <h2 class="portal-title">Student Portal</h2>
+          <div class="portal-role-desc">Student Space</div>
+          <p class="portal-desc">
+            Explore and join campus clubs, view announcements, register for Club Days, submit activity proof, and download participation certificates.
+          </p>
+          <div class="portal-features">
+            <span class="feature-chip">Browse Clubs</span>
+            <span class="feature-chip">QR Check-in</span>
+            <span class="feature-chip">Proof Submission</span>
+            <span class="feature-chip">Certificates</span>
+            <span class="feature-chip">Events</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/student/" class="launch-btn" id="launch-student">
+            Open Student Portal &rarr;
+          </a>
+          <button class="copy-btn" data-url="/student/" title="Copy URL" aria-label="Copy student portal link">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Advisor Portal -->
+      <div class="portal-card" id="card-advisor">
+        <div>
+          <div class="card-top">
+            <div class="portal-icon icon-advisor">👨‍🏫</div>
+            <span class="role-badge">Role: advisor</span>
+          </div>
+          <h2 class="portal-title">Advisor Portal</h2>
+          <div class="portal-role-desc">Advisor Console</div>
+          <p class="portal-desc">
+            For faculty club advisors. Review club annual plans, verify student attendance records, evaluate grading submissions, and approve club budgets.
+          </p>
+          <div class="portal-features">
+            <span class="feature-chip">Plan Approvals</span>
+            <span class="feature-chip">Attendance Audit</span>
+            <span class="feature-chip">Club Grading</span>
+            <span class="feature-chip">Budget Review</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/advisor/" class="launch-btn" id="launch-advisor">
+            Open Advisor Portal &rarr;
+          </a>
+          <button class="copy-btn" data-url="/advisor/" title="Copy URL" aria-label="Copy advisor portal link">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Coordinator Portal -->
+      <div class="portal-card" id="card-coordinator">
+        <div>
+          <div class="card-top">
+            <div class="portal-icon icon-coordinator">📋</div>
+            <span class="role-badge">Role: coordinator</span>
+          </div>
+          <h2 class="portal-title">Coordinator Portal</h2>
+          <div class="portal-role-desc">Coordinator Console</div>
+          <p class="portal-desc">
+            Lead student club coordinators. Manage member rosters, publish Club Day schedules, run real-time QR attendance check-ins, and prepare certificate rosters.
+          </p>
+          <div class="portal-features">
+            <span class="feature-chip">Member Roster</span>
+            <span class="feature-chip">Live QR Scanner</span>
+            <span class="feature-chip">Grading Workflows</span>
+            <span class="feature-chip">Club Days</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/coordinator/" class="launch-btn" id="launch-coordinator">
+            Open Coordinator Portal &rarr;
+          </a>
+          <button class="copy-btn" data-url="/coordinator/" title="Copy URL" aria-label="Copy coordinator portal link">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Campus Manager Portal -->
+      <div class="portal-card" id="card-campus">
+        <div>
+          <div class="card-top">
+            <div class="portal-icon icon-campus">🏢</div>
+            <span class="role-badge">Role: campus_admin</span>
+          </div>
+          <h2 class="portal-title">Campus Manager</h2>
+          <div class="portal-role-desc">Campus Manager Console</div>
+          <p class="portal-desc">
+            Campus-level administrative oversight. Authorize club charter applications, grant academic duty leave certificates, and monitor club health metrics.
+          </p>
+          <div class="portal-features">
+            <span class="feature-chip">Campus Clubs</span>
+            <span class="feature-chip">Duty Leave Grants</span>
+            <span class="feature-chip">Budget Oversight</span>
+            <span class="feature-chip">Analytics</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/campus-manager/" class="launch-btn" id="launch-campus">
+            Open Campus Console &rarr;
+          </a>
+          <button class="copy-btn" data-url="/campus-manager/" title="Copy URL" aria-label="Copy campus manager link">
+            📋
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Super Admin Portal -->
+      <div class="portal-card" id="card-super">
+        <div>
+          <div class="card-top">
+            <div class="portal-icon icon-super">🛡️</div>
+            <span class="role-badge">Role: super_admin</span>
+          </div>
+          <h2 class="portal-title">Super Admin Portal</h2>
+          <div class="portal-role-desc">Super Admin Console</div>
+          <p class="portal-desc">
+            Central institution administration. Configure multi-campus institutions, oversee all accounts and roles, review comprehensive system audits, and manage platform settings.
+          </p>
+          <div class="portal-features">
+            <span class="feature-chip">Multi-Campus Control</span>
+            <span class="feature-chip">Global Role Matrix</span>
+            <span class="feature-chip">System Audits</span>
+            <span class="feature-chip">Configuration</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/super-admin/" class="launch-btn" id="launch-super">
+            Open Super Admin &rarr;
+          </a>
+          <button class="copy-btn" data-url="/super-admin/" title="Copy URL" aria-label="Copy super admin link">
+            📋
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Guide & Info -->
+    <div class="info-section">
+      <div class="info-header">
+        <span style="font-size: 24px;">ℹ️</span>
+        <h2>Local Hosting Architecture & Credentials</h2>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <h4>🔗 Unified Single-Port Serving</h4>
+          <p>
+            All 5 independent SPAs are served via <code>server.mjs</code> on <code>http://localhost:3000</code>. Relative asset paths (<code>./shared/...</code>) and hash routing are automatically resolved.
+          </p>
+        </div>
+        <div class="info-item">
+          <h4>🔐 Authentication & Accounts</h4>
+          <p>
+            Each portal enforces strict role validation. When you sign in with an account, the backend validates the user's role and grants portal access accordingly.
+          </p>
+        </div>
+        <div class="info-item">
+          <h4>🌐 Production Deployment</h4>
+          <p>
+            Each subfolder (<code>student/</code>, <code>super-admin/</code>, etc.) is ready for direct deployment to Cloudflare Pages with bundled security headers.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Link copied to clipboard!</div>
+
+  <footer>
+    Mirai Club Activities Tracker &bull; Localhost Development Hub &bull; Running on Node.js
+  </footer>
+
+  <script>
+    // Theme toggle handling
+    const toggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function updateThemeIcon() {
+      const current = document.documentElement.dataset.theme;
+      themeIcon.textContent = current === 'dark' ? '☀️' : '🌙';
+    }
+    updateThemeIcon();
+
+    toggleBtn.addEventListener('click', () => {
+      const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = nextTheme;
+      localStorage.setItem('mirai-theme', nextTheme);
+      updateThemeIcon();
+    });
+
+    // Copy URL handling
+    const toast = document.getElementById('toast');
+    let toastTimeout;
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const path = btn.getAttribute('data-url');
+        const fullUrl = window.location.origin + path;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+          toast.textContent = `Copied: ${fullUrl}`;
+          toast.classList.add('show');
+          clearTimeout(toastTimeout);
+          toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+        });
+      });
+    });
+
+    // Backend Connectivity check
+    const statusDot = document.getElementById('statusDot');
+    const backendStatusText = document.getElementById('backendStatusText');
+    const apiLatency = document.getElementById('apiLatency');
+    const pingBtn = document.getElementById('pingBtn');
+
+    async function checkBackend() {
+      statusDot.style.background = '#f59e0b';
+      statusDot.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.2)';
+      backendStatusText.textContent = 'Pinging API...';
+      const start = performance.now();
+
+      try {
+        const res = await fetch('https://club-tracker-demo-api.onrender.com/health', {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'no-cache',
+        });
+        const elapsed = Math.round(performance.now() - start);
+        if (res.ok) {
+          statusDot.style.background = '#10b981';
+          statusDot.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.2)';
+          backendStatusText.textContent = 'API Connected';
+          apiLatency.textContent = `Ping: ${elapsed}ms`;
+        } else {
+          statusDot.style.background = '#f59e0b';
+          backendStatusText.textContent = `API Warning (${res.status})`;
+          apiLatency.textContent = `Ping: ${elapsed}ms`;
+        }
+      } catch (e) {
+        statusDot.style.background = '#ef4444';
+        statusDot.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+        backendStatusText.textContent = 'API Offline / Cold Start';
+        apiLatency.textContent = 'Ping: Timed out';
+      }
+    }
+
+    pingBtn.addEventListener('click', checkBackend);
+    checkBackend();
+  </script>
+</body>
+</html>
