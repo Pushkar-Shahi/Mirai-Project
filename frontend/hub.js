@@ -6,6 +6,13 @@ import {themeButton} from './shared/core/theme.js';
 import {frm} from './shared/components/forms.js';
 import {goToRolePortal} from './shared/auth/session.js';
 
+// Default API for remote/cloud deployments (Cloudflare Pages)
+if (typeof window !== 'undefined' && !localStorage.getItem('api')) {
+  if (location.hostname && !['localhost', '127.0.0.1'].includes(location.hostname) && !location.hostname.startsWith('192.168.') && !location.hostname.startsWith('10.')) {
+    localStorage.setItem('api', 'https://club-tracker-demo-api.onrender.com');
+  }
+}
+
 // Local development hub: one sign-in. The account's role chooses the website.
 const mount=document.getElementById('hub-login');
 if(mount){
