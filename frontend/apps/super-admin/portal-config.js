@@ -11,7 +11,7 @@ export const portalConfig=Object.freeze({
   title,
   spaceLabel:'Super admin console',
   identifierLabel:'Email',
-  loginIntro:'For program managers. Every campus, club and account is managed here.',
+  loginIntro:'Super admin accounts open this site. Campus manager, advisor, coordinator and student accounts each open their own site instead.',
   // Navigation order; the first page is home. pages.js supplies one renderer per entry.
   pages:Object.freeze(['Dashboard', 'Administration', 'Clubs', 'Members', 'Days', 'Check-in', 'Grading', 'Certs', 'Events', 'Budgets', 'Duty Leave', 'Records', 'Notification log', 'Notifications']),
   // Page subtitles that differ from shared/navigation/page-meta.js.

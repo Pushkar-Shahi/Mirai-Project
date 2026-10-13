@@ -25,4 +25,6 @@ __pycache__/
 .vscode/
 .idea/
 .wrangler/
+node_modules/
+.dev.vars
 dist-portals/

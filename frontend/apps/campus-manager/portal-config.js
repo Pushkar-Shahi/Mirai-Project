@@ -10,7 +10,7 @@ export const portalConfig=Object.freeze({
   title,
   spaceLabel:'Campus manager console',
   identifierLabel:'Email',
-  loginIntro:'For campus managers. You see and manage your own campus.',
+  loginIntro:'Campus manager accounts open this site. Super admin, advisor, coordinator and student accounts each open their own site instead.',
   // Navigation order; the first page is home. pages.js supplies one renderer per entry.
   pages:Object.freeze(['Dashboard', 'Administration', 'Clubs', 'Members', 'Days', 'Check-in', 'Grading', 'Certs', 'Events', 'Budgets', 'Duty Leave', 'Records', 'Notification log', 'Notifications']),
   // Page subtitles that differ from shared/navigation/page-meta.js.

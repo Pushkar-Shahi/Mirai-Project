@@ -167,14 +167,17 @@ reading session state through `core/state.js`, and the items listed under sectio
 
 `frontend/shared/app/portal-runtime.js` and `auth/session.js`:
 
-1. **Sign in.** The portal calls the existing `POST /auth/login`, with the same request,
-   response and error messages as before.
-2. **Wrong role.** If `user.role` is not the portal's `expectedRole`, the token is thrown
-   away unused and the role-mismatch screen is shown. It says which portal the account
-   belongs to, links to it when its address is configured (`MIRAI_PORTAL_URL_*`), and
-   offers **Sign out**, which returns to this portal's sign-in.
+1. **Sign in.** The portal (or the local hub at `frontend/index.html`) calls the existing
+   `POST /auth/login`, with the same request, response and error messages as before. The
+   account's role chooses the website: campus manager credentials open the Campus Manager
+   Portal, super admin credentials open the Super Admin Portal, and so on.
+2. **Another role.** If `user.role` is not the portal's `expectedRole`, the token is not
+   stored here. The browser is sent to that role's portal (`runtimeConfig.portalUrls` /
+   `MIRAI_PORTAL_URL_*`) with a one-time `#handoff=` fragment. If that address is not
+   configured, the role-mismatch screen is shown with a link and **Sign out**.
 3. **Right role.** The token is stored in `sessionStorage` under `mirai:<portal>:token`
-   (one tab, one portal), and the portal shell opens.
+   (one tab, one portal), and the portal shell opens. A `#handoff=` token on load is
+   checked with `/auth/me` and then stored the same way.
 4. **Reload.** The stored token is checked with `GET /auth/me`. A 401 (expired, invalid or
    changed account) ends the session with "Your session has ended. Please sign in again." A
    different role shows the mismatch screen and clears the token. A network failure shows

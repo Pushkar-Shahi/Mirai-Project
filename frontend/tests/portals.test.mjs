@@ -145,8 +145,12 @@ test('the frontend source never hardcodes a production API host or stores secret
 test('the sign-in flow checks the role before it shows a portal', async () => {
   const session = await readFile(path.join(SHARED, 'auth/session.js'), 'utf8');
   const runtime = await readFile(path.join(SHARED, 'app/portal-runtime.js'), 'utf8');
-  // signIn stores the token only after the role matches.
-  assert.match(session, /if\(!roleMatches\(portal,r\.user\)\)return\{ok:false,user:r\.user\};\s*storeToken/);
+  // signIn stores the token only after the role matches this portal.
+  assert.match(session, /if\(!roleMatches\(portal,r\.user\)\)return\{ok:false,user:r\.user,access_token:r\.access_token\};\s*storeToken/);
+  // Another role is sent to its own portal (campus manager, super admin, …).
+  assert.match(runtime, /if\(goToRolePortal\(r\.user,r\.access_token\)\)return/);
+  assert.match(session, /dest\.hash='handoff='\+encodeURIComponent\(token\)/);
+  assert.match(runtime, /takeHandoffToken/);
   // A restored session is checked against /auth/me before the shell is shown.
   assert.match(runtime, /if\(!roleMatches\(portal,user\)\)\{clearSession\(portal\);return roleMismatchView/);
 });

@@ -2,7 +2,7 @@
 
 A multi-campus platform for club activities: join requests, club days with a rotating-QR check-in, submissions with rubric scoring, verifiable PDF certificates, events with teams, and dashboards that reconcile with the raw data.
 
-Backend: FastAPI and PostgreSQL. Production can use Redis and Celery; local mode runs without them. Frontend: five role portals (Super Admin, Campus Manager, Advisor, Coordinator, Student), each a separate static site built from shared vanilla JavaScript modules and deployed on its own, for example to Cloudflare Pages. All five use the same API and database.
+Backend: FastAPI and PostgreSQL. Production can use Redis and Celery; local mode runs without them. Frontend: five role portals (Super Admin, Campus Manager, Advisor, Coordinator, Student), each a separate static site built from shared vanilla JavaScript modules and deployed on its own, for example to Cloudflare Pages. All five use the same API and database. The backend can also be deployed through Cloudflare Containers; see [docs/CLOUDFLARE_CONTAINERS.md](docs/CLOUDFLARE_CONTAINERS.md).
 
 ## Role portals
 
@@ -14,7 +14,7 @@ Backend: FastAPI and PostgreSQL. Production can use Redis and Celery; local mode
 | Coordinator Portal | `coordinator` | `frontend/apps/coordinator` |
 | Student Portal | `student` | `frontend/apps/student` |
 
-Shared code (API client, sign-in, layout, components and every feature page) lives once in `frontend/shared/`. A portal's `pages.js` picks the pages it uses, and its build contains only those modules. Each portal accepts only its own role; someone who signs in to the wrong portal is told which one to use and can sign out. That check is for the user's benefit only: the API still enforces every permission and campus/club scope. Details: [docs/ROLE_PORTALS.md](docs/ROLE_PORTALS.md). Deployment: [docs/CLOUDFLARE_DEPLOYMENT.md](docs/CLOUDFLARE_DEPLOYMENT.md).
+Shared code (API client, sign-in, layout, components and every feature page) lives once in `frontend/shared/`. A portal's `pages.js` picks the pages it uses, and its build contains only those modules. Signing in with a given account opens that role's portal (campus manager, super admin, advisor, coordinator or student). If you start on another portal, you are sent to the one that matches the account. That check is for the user's benefit only: the API still enforces every permission and campus/club scope. Details: [docs/ROLE_PORTALS.md](docs/ROLE_PORTALS.md). Deployment: [docs/CLOUDFLARE_DEPLOYMENT.md](docs/CLOUDFLARE_DEPLOYMENT.md).
 
 Build one portal (Node.js 18+, no npm packages needed):
 
@@ -56,7 +56,7 @@ pip install -r backend/requirements.txt
 ./scripts/run_local.sh --demo
 ```
 
-Open a portal, for example http://127.0.0.1:5500/apps/student/ or http://127.0.0.1:5500/apps/coordinator/ (http://127.0.0.1:5500 lists all five), and sign in with a demo account for that portal's role (password: `password123`; development only). API docs are at http://127.0.0.1:8000/docs. PostgreSQL data, generated uploads, and a local JWT secret persist under `.local/`. The check-in cache is in memory and clears on restart. Use `./scripts/run_local.sh` without `--demo` to skip demo data. The PostgreSQL server stays running after the app exits so its data remains available; stop it with `$(brew --prefix postgresql@16)/bin/pg_ctl -D .local/postgres stop`.
+Open http://127.0.0.1:5500 and sign in. The account chooses the site: `admin@demo.edu` opens the Campus Manager Portal, `super@demo.edu` opens Super Admin, `s001@demo.edu` opens Student, and so on (password: `password123`; development only). You can also open a portal directly, for example http://127.0.0.1:5500/apps/student/; signing in with another role still sends you to that role's site. API docs are at http://127.0.0.1:8000/docs. PostgreSQL data, generated uploads, and a local JWT secret persist under `.local/`. The check-in cache is in memory and clears on restart. Use `./scripts/run_local.sh` without `--demo` to skip demo data. The PostgreSQL server stays running after the app exits so its data remains available; stop it with `$(brew --prefix postgresql@16)/bin/pg_ctl -D .local/postgres stop`.
 
 The local launcher also makes the frontend and API reachable from other devices on your local network. Keep your computer and phone/tablet on the same Wi-Fi, run the launcher, then open the printed **On this network** portal URL on the other device. The frontend automatically uses that same computer address for API requests. If your network blocks local connections, allow ports 5500 and 8000 through the computer's firewall. The database remains private to the computer.
 

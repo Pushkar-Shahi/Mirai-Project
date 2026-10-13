@@ -10,7 +10,7 @@ export const portalConfig=Object.freeze({
   title,
   spaceLabel:'Coordinator console',
   identifierLabel:'Email',
-  loginIntro:'For club coordinators. You see the clubs you coordinate.',
+  loginIntro:'Coordinator accounts open this site. Other roles are sent to their own website.',
   // Navigation order; the first page is home. pages.js supplies one renderer per entry.
   pages:Object.freeze(['Home', 'Members', 'Days', 'Check-in', 'Grading', 'Certs', 'Events', 'Budgets', 'Dashboard', 'Notifications']),
   // Page subtitles that differ from shared/navigation/page-meta.js.

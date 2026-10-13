@@ -1,0 +1,15 @@
+FROM python:3.12-slim
+
+# WeasyPrint needs Pango and HarfBuzz at runtime to render certificates.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY backend/requirements.txt backend/requirements-production.txt ./
+RUN pip install --no-cache-dir -r requirements-production.txt
+COPY backend/ ./
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+EXPOSE 8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

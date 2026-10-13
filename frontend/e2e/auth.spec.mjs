@@ -50,17 +50,13 @@ for (const portal of PORTAL_IDS) {
       await expect(page.getByRole('button', {name: 'Continue to workspace'})).toBeVisible();
     });
 
-    test('turns away an account of another role and offers sign-out', async ({page}) => {
+    test('sends another role to its own portal and signs them in there', async ({page}) => {
       const other = WRONG[portal];
       await signIn(page, portal, DEMO[other]);
-      await expect(page.getByRole('heading', {name: `This is the ${TITLE[portal]}`})).toBeVisible();
-      await expect(page.getByText('Wrong portal')).toBeVisible();
-      await expect(page.locator('#nav')).toHaveCount(0);
-      await expect(page.locator('#view')).toHaveCount(0);
-      expect(await storedToken(page, portal), 'the token of a mismatched account is never kept').toBeNull();
-      await expect(page.getByRole('link', {name: `Open the ${TITLE[other]}`})).toHaveAttribute('href', portalUrl(other));
-      await page.getByRole('button', {name: 'Sign out'}).click();
-      await expect(page.getByRole('heading', {name: `Sign in to the ${TITLE[portal]}`})).toBeVisible();
+      await expect(page).toHaveURL(url => url.href.startsWith(portalUrl(other)));
+      await expect(page.locator('#nav')).toBeVisible();
+      expect(await storedToken(page, other)).toBeTruthy();
+      expect(await storedToken(page, portal), 'the token is not kept on the portal they left').toBeNull();
     });
 
     test('a stored token for another role is rejected on load', async ({page, request}) => {

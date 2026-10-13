@@ -10,7 +10,7 @@ export const portalConfig=Object.freeze({
   title,
   spaceLabel:'Advisor console',
   identifierLabel:'Email',
-  loginIntro:'For faculty advisors. You see the clubs you advise.',
+  loginIntro:'Advisor accounts open this site. Other roles are sent to their own website.',
   // Navigation order; the first page is home. pages.js supplies one renderer per entry.
   pages:Object.freeze(['Home', 'Days', 'Check-in', 'Grading', 'Certs', 'Events', 'Budgets', 'Dashboard', 'Notifications']),
   // Page subtitles that differ from shared/navigation/page-meta.js.

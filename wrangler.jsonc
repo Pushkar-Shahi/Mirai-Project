@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "mirai-api",
+  "main": "cloudflare/src/index.ts",
+  "compatibility_date": "2026-10-13",
+  "observability": { "enabled": true },
+  "containers": [
+    {
+      "class_name": "MiraiApi",
+      "scheduling_policy": "durable_object",
+      "images": {
+        "base": { "dockerfile": "./Dockerfile.cloudflare" }
+      }
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "MIRAI_API", "class_name": "MiraiApi" }]
+  },
+  "exports": {
+    "MiraiApi": { "type": "durable-object", "storage": "sqlite" }
+  },
+  "vars": {
+    "APP_NAME": "Mirai Club Activities Tracker",
+    "APP_SHORT_NAME": "Mirai Clubs",
+    "INSTITUTION_NAME": "Mirai",
+    "APP_TIMEZONE": "Asia/Kolkata"
+  }
+}

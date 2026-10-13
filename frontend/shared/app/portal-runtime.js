@@ -3,7 +3,7 @@ import {CFG,setConfig,setSession,clearLiveTimer} from '../core/state.js';
 import {configureRouter,watchHash,homeOf} from '../navigation/router.js';
 import {loginView} from '../auth/login-view.js';
 import {roleMismatchView} from '../auth/role-mismatch-view.js';
-import {storedToken,signIn,fetchSessionUser,roleMatches,clearSession} from '../auth/session.js';
+import {storedToken,storeToken,signIn,fetchSessionUser,roleMatches,clearSession,takeHandoffToken,goToRolePortal} from '../auth/session.js';
 import {shell,stopBadgeTimer} from './shell.js';
 
 // Starts one role portal: `portal` is its portal-config.js, `pages` maps each page id in
@@ -17,7 +17,10 @@ export function startPortal(portal,pages){
 
 function showLogin(portal,message){loginView(portal,{message,onSignIn:async(identifier,password)=>{
  const r=await signIn(portal,identifier,password);
- if(!r.ok)return roleMismatchView(portal,r.user,()=>signOut(portal));
+ if(!r.ok){
+  // Campus manager, super admin, student, … each open their own site.
+  if(goToRolePortal(r.user,r.access_token))return;
+  return roleMismatchView(portal,r.user,()=>signOut(portal))}
  history.replaceState(null,'','#/'+encodeURIComponent(homeOf()));shell(portal,()=>signOut(portal))}})}
 
 function signOut(portal,message){clearSession(portal);try{sessionStorage.clear()}catch{}clearLiveTimer();stopBadgeTimer();
@@ -26,7 +29,8 @@ function signOut(portal,message){clearSession(portal);try{sessionStorage.clear()
 async function loadConfig(){try{const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),4000);const r=await fetch(API()+'/config/public',{signal:ctl.signal});clearTimeout(t);if(r.ok)setConfig(await r.json())}catch{}document.title=CFG.app_name}
 
 async function boot(portal){await loadConfig();
- const token=storedToken(portal);if(!token)return showLogin(portal);
+ const handed=takeHandoffToken();
+ const token=handed||storedToken(portal);if(!token)return showLogin(portal);
  let user;
  try{user=await fetchSessionUser(token)}
  catch(e){
@@ -36,4 +40,5 @@ async function boot(portal){await loadConfig();
   if(!e.status){setSession(null,null);return showLogin(portal,e.message)}
   clearSession(portal);return showLogin(portal,e.message)}
  if(!roleMatches(portal,user)){clearSession(portal);return roleMismatchView(portal,user,()=>signOut(portal))}
+ if(handed)storeToken(portal,handed);
  setSession(token,user);shell(portal,()=>signOut(portal))}
