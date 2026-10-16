@@ -29,6 +29,9 @@ export const runtimeConfig = Object.freeze({
     ['admin@demo.edu', 'campus_admin', 'Campus manager'],
     ['super@demo.edu', 'super_admin', 'Super admin'],
   ],
+  // The central sign-in site. Blank: each portal shows the same sign-in screen itself.
+  // Builds set it from MIRAI_LOGIN_URL; then portals send signed-out visitors there.
+  loginUrl: '',
   // Where each portal lives, keyed by portal id. Used to point a signed-in user at the
   // right portal for their role. Locally every portal is served next to the others.
   portalUrls: {

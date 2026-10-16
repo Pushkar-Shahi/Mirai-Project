@@ -12,7 +12,7 @@ export class ApiError extends Error{constructor(m,status,detail){super(m);this.s
 export async function api(m,p,b,fd){const o={method:m,headers:{}};if(tok)o.headers.Authorization='Bearer '+tok;
  if(fd)o.body=fd;else if(b!==undefined&&b!==null){o.headers['Content-Type']='application/json';o.body=JSON.stringify(b)}
  let r;try{r=await fetch(API()+p,o)}catch{throw new ApiError(`Cannot reach the server at ${API()}. Check your connection and try again.`,0)}
- if(r.status===401&&tok&&p!=='/auth/login'){onUnauthorized('Your session has ended. Please sign in again.');throw new ApiError('Session expired',401)}
+ if(r.status===401&&tok&&p!=='/auth/login'){onUnauthorized('expired');throw new ApiError('Session expired',401)}
  if(!r.ok){const d=await r.json().catch(()=>({}));const det=d.detail;
   const msg=typeof det==='string'?det:Array.isArray(det)?det.map(x=>(x.loc&&x.loc.length>1?String(x.loc[x.loc.length-1]).replaceAll('_',' ')+': ':'')+String(x.msg).replace(/^Value error, /,'')).join('; '):det&&det.message?det.message:r.status===403?'You do not have permission to do that.':`Something went wrong (error ${r.status}).`;
   throw new ApiError(msg,r.status,det)}

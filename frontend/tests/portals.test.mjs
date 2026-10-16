@@ -48,7 +48,7 @@ for (const portal of PORTALS) {
     assert.equal(portalConfig.title, portal.title);
     assert.deepEqual([...portalConfig.pages], ORIGINAL_TABS[portal.role]);
     assert.ok(Object.isFrozen(portalConfig));
-    for (const field of ['spaceLabel', 'identifierLabel', 'loginIntro']) assert.ok(portalConfig[field], field);
+    for (const field of ['spaceLabel']) assert.ok(portalConfig[field], field);
     for (const t of portalConfig.pages) {
       assert.ok(pageCopy[t], `page-meta has no title for ${t}`);
       assert.ok(navGlyph[t], `page-meta has no icon for ${t}`);
@@ -116,6 +116,8 @@ async function allSharedFiles(dir = SHARED) {
 test('every shared module is used by at least one portal', async () => {
   const used = new Set();
   for (const portal of PORTALS) for (const m of await moduleSet(portal)) used.add(m);
+  // The central sign-in site (frontend/login) shares the sign-in modules with the portals.
+  for (const f of await collectFiles(path.join(FRONTEND, 'login', 'index.html'))) if (f.startsWith(SHARED)) used.add(path.relative(SHARED, f).split(path.sep).join('/'));
   const unused = (await allSharedFiles()).map(x => path.relative(SHARED, x).split(path.sep).join('/')).filter(x => !used.has(x));
   assert.deepEqual(unused, []);
 });
@@ -148,9 +150,9 @@ test('the sign-in flow checks the role before it shows a portal', async () => {
   // signIn stores the token only after the role matches this portal.
   assert.match(session, /if\(!roleMatches\(portal,r\.user\)\)return\{ok:false,user:r\.user,access_token:r\.access_token\};\s*storeToken/);
   // Another role is sent to its own portal (campus manager, super admin, …).
-  assert.match(runtime, /if\(goToRolePortal\(r\.user,r\.access_token\)\)return/);
-  assert.match(session, /dest\.hash='handoff='\+encodeURIComponent\(token\)/);
-  assert.match(runtime, /takeHandoffToken/);
+  assert.match(runtime, /if\(goToRolePortal\(r\.user,r\.access_token,\{next:wanted\}\)\)return/);
+  assert.match(session, /new URLSearchParams\(\{handoff:token\}\)/);
+  assert.match(runtime, /takeHandoff\(\)/);
   // A restored session is checked against /auth/me before the shell is shown.
   assert.match(runtime, /if\(!roleMatches\(portal,user\)\)\{clearSession\(portal\);return roleMismatchView/);
 });

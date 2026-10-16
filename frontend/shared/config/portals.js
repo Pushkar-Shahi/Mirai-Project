@@ -11,3 +11,7 @@ export const PORTALS = Object.freeze([
 
 export const portalById = id => PORTALS.find(p => p.id === id) || null;
 export const portalForRole = role => PORTALS.find(p => p.role === role) || null;
+
+// The central sign-in site (frontend/login). It is not a role portal: it signs an account in,
+// asks the server for its role (GET /auth/me) and sends the browser to the matching portal.
+export const LOGIN_SITE = Object.freeze({ id: 'login', role: null, title: 'Sign in', dir: 'login' });

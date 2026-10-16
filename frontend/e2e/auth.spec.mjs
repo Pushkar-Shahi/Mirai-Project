@@ -16,9 +16,9 @@ const WRONG = {'super-admin': 'student', 'campus-manager': 'super-admin', adviso
 
 for (const portal of PORTAL_IDS) {
   test.describe(TITLE[portal], () => {
-    test('shows its own sign-in screen without demo logins or API override', async ({page}) => {
+    test('shows the shared sign-in screen without demo logins or API override', async ({page}) => {
       await page.goto(portalUrl(portal));
-      await expect(page.getByRole('heading', {name: `Sign in to the ${TITLE[portal]}`})).toBeVisible();
+      await expect(page.getByRole('heading', {name: 'Sign in to Mirai Clubs'})).toBeVisible();
       await expect(page.locator('.demo-area')).toHaveCount(0);
       await expect(page.locator('.api-setting')).toHaveCount(0);
       await expect(page.locator('#nav')).toHaveCount(0);
@@ -44,6 +44,7 @@ for (const portal of PORTAL_IDS) {
       await expect(page.locator('#nav')).toBeVisible();
 
       await page.getByRole('button', {name: 'Sign out'}).click();
+      await page.locator('.modal').getByRole('button', {name: 'Sign out'}).click(); // confirm
       await expect(page.getByRole('button', {name: 'Continue to workspace'})).toBeVisible();
       expect(await storedToken(page, portal)).toBeNull();
       await page.reload();
@@ -80,7 +81,7 @@ test('wrong password shows the API message and stores nothing', async ({page}) =
 test('an expired or invalid stored token ends the session with a message', async ({page}) => {
   await page.addInitScript(k => { if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem(k, 'expired.or.invalid'); sessionStorage.setItem('seeded', '1'); } }, tokenKey('coordinator'));
   await page.goto(portalUrl('coordinator'));
-  await expect(page.locator('.notice', {hasText: 'Your session has ended. Please sign in again.'})).toBeVisible();
+  await expect(page.locator('.notice', {hasText: 'Your session has expired. Please sign in again.'})).toBeVisible();
   await expect(page.locator('#nav')).toHaveCount(0);
 });
 
@@ -88,7 +89,7 @@ test('a token that expires mid-session returns to sign-in', async ({page}) => {
   await signedIn(page, 'advisor');
   await page.evaluate(k => sessionStorage.setItem(k, 'tampered'), tokenKey('advisor'));
   await page.reload();
-  await expect(page.locator('.notice', {hasText: 'Your session has ended'})).toBeVisible();
+  await expect(page.locator('.notice', {hasText: 'Your session has expired'})).toBeVisible();
 });
 
 test('an unreachable API gives a readable message', async ({page, allowConsole}) => {
@@ -103,7 +104,7 @@ test('an unreachable API gives a readable message', async ({page, allowConsole})
 test('each portal keeps its own session (separate origins)', async ({page}) => {
   await signedIn(page, 'student');
   await page.goto(portalUrl('coordinator'));
-  await expect(page.getByRole('heading', {name: 'Sign in to the Coordinator Portal'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Sign in to Mirai Clubs'})).toBeVisible();
   await page.goto(portalUrl('student'));
   await expect(page.locator('#nav')).toBeVisible();
 });

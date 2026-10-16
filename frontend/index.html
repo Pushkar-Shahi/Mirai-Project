@@ -7,9 +7,6 @@
 <style>
 .portal-index{max-width:760px;margin:0 auto;padding:48px 16px}
 .portal-index .list-item a{font-weight:700;color:var(--brand-deep)}
-.hub-login-card{margin:0 0 24px}
-.hub-login-card h2{margin:8px 0 8px}
-.hub-login-card .demo-area{margin-top:16px}
 </style>
 </head><body>
 <!-- Local development only. scripts/run_local.sh serves this folder; no Cloudflare Pages
@@ -17,8 +14,8 @@
 <main class="portal-index">
   <div class="page-eyebrow">Local development</div>
   <h1>Mirai role portals</h1>
-  <p class="mut">Sign in once. Your ID and password choose the website: campus manager, super admin, advisor, coordinator or student. All five use the same API (port 8000 on this computer during development).</p>
-  <div id="hub-login"></div>
+  <p class="mut">Sign in once on the sign-in page. Your ID and password choose the website: campus manager, super admin, advisor, coordinator or student. All five use the same API (port 8000 on this computer during development).</p>
+  <p><a class="button-link" href="login/">Open the sign-in page</a></p>
   <p class="mut">Or open a portal directly:</p>
   <div class="card"><div class="list">
     <div class="list-item"><div><a href="apps/super-admin/">Super Admin Portal</a><small>Program managers: every campus, campus creation</small></div><code>super_admin</code></div>
@@ -29,5 +26,4 @@
   </div></div>
   <p class="mut">Build one for deployment with <code>node frontend/scripts/build-portal.mjs &lt;portal&gt;</code>. See docs/CLOUDFLARE_DEPLOYMENT.md.</p>
 </main>
-<script type="module" src="hub.js"></script>
 </body></html>
