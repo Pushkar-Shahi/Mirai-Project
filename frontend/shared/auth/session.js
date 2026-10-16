@@ -16,6 +16,8 @@ import {setSession} from '../core/state.js';
 // two portals served from one origin during development never share a session.
 const tokenKey=portal=>`mirai:${portal.portalId}:token`;
 const HANDOFF='#handoff=';
+// Page navigation goes through this object so tests can observe redirects (jsdom cannot navigate).
+export const redirect={to:url=>location.replace(url)};
 export const storedToken=portal=>{try{return sessionStorage.getItem(tokenKey(portal))}catch{return null}};
 export const storeToken=(portal,token)=>{try{sessionStorage.setItem(tokenKey(portal),token)}catch{}};
 export const roleMatches=(portal,user)=>!!user&&user.role===portal.expectedRole;
@@ -50,7 +52,7 @@ export function goToRolePortal(user,token,{url,next}={}){
  const dest=new URL(destUrl,location.href),q=new URLSearchParams({handoff:token});
  if(safeNext(next))q.set('next',next);
  dest.hash=q.toString();
- location.replace(dest.href);
+ redirect.to(dest.href);
  return true}
 
 // Where a portal sends a visitor who has no session (or whose session ended) when a
@@ -61,7 +63,7 @@ export function goToLogin({reason,next}={}){
  const dest=new URL(base,location.href);
  if(reason)dest.searchParams.set('reason',reason);
  if(safeNext(next))dest.searchParams.set('next',next);
- location.replace(dest.href);
+ redirect.to(dest.href);
  return true}
 
 export const REASON_MESSAGES=Object.freeze({

@@ -398,7 +398,8 @@ def main():
     check("cancelled (outdated) reminders are distinguishable", cn["total"] >= 1, cn["total"])
     ca = c.get("/admin/notifications?limit=200", headers=admin).json()
     check("campus admin history excludes other campuses",
-          all(i["recipient_campus"] in (None, "Main Campus") for i in ca["items"]), {i["recipient_campus"] for i in ca["items"]})
+          all(i["recipient_campus"] in (None, c.get("/auth/me", headers=admin).json()["campus_name"]) for i in ca["items"]),
+          {i["recipient_campus"] for i in ca["items"]})
     r = c.put("/notifications/email-preference", headers=s3, json={"enabled": False})
     check("users can turn email notifications off", r.json().get("enabled") is False)
     c.put("/notifications/email-preference", headers=s3, json={"enabled": True})
