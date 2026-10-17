@@ -529,14 +529,359 @@ body.mirai-auth-body {
   margin-bottom: 20px;
 }
 
-@media (max-width: 960px) {
+/* ==========================================================================
+   LOGIN PAGE MULTI-DEVICE OPTIMIZATION SYSTEM (Phone, Tablet, Desktop, TV)
+   ========================================================================== */
+
+/* Top header brand logo sizing & spacing */
+.mirai-top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) 12px max(24px, env(safe-area-inset-left, 0px));
+  position: relative;
+  z-index: 10;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.mirai-auth-body .mobile-brand {
+  display: none !important; /* Avoid duplicate logo since mirai-top-header is already rendered */
+}
+
+/* Connection settings accordion */
+.mirai-auth-body .api-setting {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mirai-auth-body .api-setting summary {
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s ease;
+}
+
+.mirai-auth-body .api-setting summary:hover {
+  color: #00f0ff;
+}
+
+.mirai-auth-body .api-setting label {
+  display: block;
+  margin-top: 10px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.mirai-auth-body .api-setting input {
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+  margin-top: 4px !important;
+  border-radius: 8px !important;
+}
+
+/* --------------------------------------------------------------------------
+   LOGIN: TABLETS (769px to 1024px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
   .mirai-auth-body .login-screen {
     grid-template-columns: 1fr;
-    padding: 24px 20px 40px;
-    gap: 36px;
+    max-width: 600px;
+    padding: 24px 20px max(40px, env(safe-area-inset-bottom, 0px));
+    gap: 32px;
   }
+
+  .mirai-auth-body .login-story {
+    text-align: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .mirai-auth-body .story-copy {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .mirai-auth-body .story-copy .eyebrow {
+    margin-inline: auto;
+  }
+
+  .mirai-auth-body .story-copy h1 {
+    font-size: clamp(32px, 5vw, 44px);
+    margin-inline: auto;
+  }
+
+  .mirai-auth-body .hero-sub {
+    margin: 0 auto 16px;
+  }
+
+  .mirai-auth-body .story-stats {
+    justify-content: center;
+    gap: 32px;
+    margin-top: 18px;
+  }
+
+  .mirai-auth-body .story-footer {
+    display: none;
+  }
+
+  .mirai-auth-body .login-card {
+    max-width: 520px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LOGIN: PHONES (<= 768px, iPhones, Galaxy, Pixel)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .mirai-auth-body .login-screen {
+    min-height: calc(100dvh - 65px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 16px max(32px, env(safe-area-inset-bottom, 0px)) !important;
+    gap: 16px;
+  }
+
+  /* Hide story on mobile so login card is immediately actionable without scroll */
+  .mirai-auth-body .login-story {
+    display: none !important;
+  }
+
+  .mirai-auth-body .login-side {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .mirai-auth-body .login-card {
+    width: 100% !important;
+    max-width: 440px !important;
+    padding: 26px 20px !important;
+    border-radius: 20px !important;
+    background: rgba(11, 15, 27, 0.94) !important;
+    backdrop-filter: blur(28px) !important;
+    -webkit-backdrop-filter: blur(28px) !important;
+    border: 1px solid rgba(0, 210, 255, 0.22) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 210, 255, 0.08) !important;
+  }
+
+  .mirai-auth-body .login-card h2 {
+    font-size: 23px !important;
+    letter-spacing: -0.5px;
+  }
+
+  .mirai-auth-body .card-subtitle {
+    font-size: 12.5px;
+    margin-bottom: 20px;
+  }
+
+  /* Prevent iOS Safari auto-zoom by enforcing >= 16px font size */
+  .mirai-auth-body .login-card form input[type="text"],
+  .mirai-auth-body .login-card form input[type="password"] {
+    font-size: 16px !important;
+    height: 48px !important;
+    padding: 12px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .mirai-auth-body .login-card form button[type="submit"] {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    margin-top: 10px !important;
+    touch-action: manipulation;
+  }
+
+  /* Demo accounts: clean 2-column touch grid on mobile */
+  .mirai-auth-body .demo-area {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .mirai-auth-body .demo-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100%;
+  }
+
+  .mirai-auth-body .demo-buttons button {
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}
+
+/* Small Phones fine-tuning (<= 380px: iPhone SE, older Android) */
+@media (max-width: 380px) {
+  .mirai-auth-body .login-card {
+    padding: 20px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .mirai-auth-body .login-card h2 {
+    font-size: 20px !important;
+  }
+
+  .mirai-auth-body .demo-buttons {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LOGIN: LANDSCAPE MOBILE & FOLDABLES (@media max-height: 520px)
+   -------------------------------------------------------------------------- */
+@media (max-height: 520px) and (orientation: landscape) {
   .mirai-top-header {
-    padding: 12px 20px;
+    padding: 6px 16px 4px;
+    height: 38px;
+  }
+
+  .mirai-auth-body .login-screen {
+    min-height: calc(100vh - 40px);
+    padding: 8px 16px 20px !important;
+    gap: 12px;
+  }
+
+  .mirai-auth-body .login-card {
+    padding: 16px 20px !important;
+    border-radius: 16px !important;
+    max-width: 480px !important;
+  }
+
+  .mirai-auth-body .card-subtitle {
+    margin-bottom: 12px;
+  }
+
+  .mirai-auth-body .spotlight-head .theme-btn {
+    margin-bottom: 8px;
+  }
+
+  .mirai-auth-body .login-card form input[type="text"],
+  .mirai-auth-body .login-card form input[type="password"] {
+    height: 40px !important;
+    padding: 8px 12px !important;
+  }
+
+  .mirai-auth-body .login-card form button[type="submit"] {
+    min-height: 40px !important;
+    padding: 10px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LOGIN: TVS, SMART DISPLAYS & 4K UHD (1920px+, 4K UHD, display-mode: tv)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1921px), (display-mode: tv) {
+  .mirai-top-header {
+    max-width: 1600px;
+    padding-top: max(32px, 3vh);
+    padding-inline: max(40px, 3vw);
+  }
+
+  .mirai-top-header .brand-mark {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .mirai-top-header .brand-copy strong {
+    font-size: 20px;
+  }
+
+  .mirai-auth-body .login-screen {
+    min-height: calc(100vh - 120px);
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+    gap: 72px;
+  }
+
+  .mirai-auth-body .story-copy {
+    max-width: 700px;
+  }
+
+  .mirai-auth-body .story-copy h1 {
+    font-size: clamp(48px, 3.8vw, 68px);
+    line-height: 1.1;
+  }
+
+  .mirai-auth-body .hero-sub {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  .mirai-auth-body .story-stats strong {
+    font-size: 32px;
+  }
+
+  .mirai-auth-body .story-stats small {
+    font-size: 15px;
+  }
+
+  .mirai-auth-body .login-card {
+    max-width: 540px;
+    padding: 44px 40px;
+    border-radius: 28px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 210, 255, 0.12);
+  }
+
+  .mirai-auth-body .login-card h2 {
+    font-size: 30px;
+  }
+
+  .mirai-auth-body .card-subtitle {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+
+  .mirai-auth-body .login-card label {
+    font-size: 14px;
+  }
+
+  .mirai-auth-body .login-card form input[type="text"],
+  .mirai-auth-body .login-card form input[type="password"] {
+    height: 56px !important;
+    font-size: 18px !important;
+    padding: 14px 18px !important;
+    border-radius: 14px !important;
+  }
+
+  .mirai-auth-body .login-card form button[type="submit"] {
+    height: 56px !important;
+    font-size: 18px !important;
+    border-radius: 14px !important;
+  }
+
+  .mirai-auth-body .demo-buttons button {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+  }
+
+  /* High-visibility spatial D-pad focus outline for TV remotes */
+  .mirai-auth-body button:focus-visible,
+  .mirai-auth-body input:focus-visible,
+  .mirai-auth-body summary:focus-visible {
+    outline: 4px solid #00f0ff !important;
+    outline-offset: 4px !important;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.85) !important;
   }
 }
 
