@@ -9,7 +9,7 @@ import {loginStory} from './login-view.js';
 // Shown when someone signs in to a portal that does not serve their role, for example a
 // student on the Super Admin Portal. Nothing from this portal is loaded for them; the
 // only ways forward are their own portal (when its address is known) or signing out.
-export function roleMismatchView(portal,user,onSignOut){const A=document.getElementById('app');A.replaceChildren();document.body.className='';document.title=`${portal.title} · ${CFG.app_short_name}`;
+export function roleMismatchView(portal,user,onSignOut){const A=document.getElementById('app');A.replaceChildren();document.body.className='mirai-auth-body';document.title=`${portal.title} · ${CFG.app_short_name}`;
  const home=portalForRole(user.role),url=home&&runtimeConfig.portalUrls?.[home.id];
  A.append(h('div',{class:'login-screen'},loginStory(portal),h('section',{class:'login-side'},h('div',{class:'mobile-brand'},logo()),h('div',{class:'login-card',role:'alert'},h('div',{class:'spotlight-head'},h('div',{class:'page-eyebrow'},'Wrong portal'),themeButton()),
   h('h2',{},`This is the ${portal.title}`),
