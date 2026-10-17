@@ -11,3 +11,69 @@ export const tbl=(r,cols,emptyText='Nothing to show yet')=>r.length?h('div',{cla
 export const statGrid=items=>h('div',{class:'stat-grid'},items.map(([label,value,sub])=>h('div',{class:'stat'},h('small',{},label),h('strong',{},value),sub&&h('span',{},sub))));
 export const clean=d=>{Object.keys(d).forEach(k=>d[k]===''&&delete d[k]);return d};
 export const picker=(o,attrs={})=>h('select',attrs,o.map(x=>h('option',{value:x[0]},x[1])));
+export const multiFilter=(options,attrs={})=>{
+ let opts=[...options];
+ if(!opts.some(o=>o[0]===''||o[0]==='all'))opts.unshift(['','All']);
+ const selected=new Set(['']);
+ const container=h('div',{class:'multi-filter-group',role:'group','aria-label':attrs['aria-label']||'Filter options',style:'display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;'});
+ const updateClasses=()=>{
+  container.querySelectorAll('.multi-filter-chip').forEach(btn=>{
+   const val=btn.dataset.val;
+   const isSel=selected.has(val);
+   btn.className=`multi-filter-chip s ${isSel?'primary active':''}`;
+   btn.setAttribute('aria-pressed',isSel?'true':'false');
+  });
+ };
+ const getValues=()=>Array.from(selected).filter(v=>v!==''&&v!=='all');
+ const notify=()=>{
+  updateClasses();
+  if(typeof container.onchange==='function')container.onchange({target:container,currentTarget:container});
+  container.dispatchEvent(new Event('change',{bubbles:true}));
+ };
+ opts.forEach(([val,label])=>{
+  const isAll=(val===''||val==='all');
+  const chip=h('button',{
+   type:'button',
+   class:`multi-filter-chip s ${isAll?'primary active':''}`,
+   'data-val':String(val),
+   'aria-pressed':isAll?'true':'false',
+   onclick:()=>{
+    if(isAll){
+     selected.clear();
+     selected.add(val);
+    }else{
+     selected.delete('');
+     selected.delete('all');
+     if(selected.has(String(val))){
+      selected.delete(String(val));
+      if(selected.size===0){
+       const allVal=opts.find(o=>o[0]===''||o[0]==='all')?.[0]??'';
+       selected.add(allVal);
+      }
+     }else{
+      selected.add(String(val));
+     }
+    }
+    notify();
+   }
+  },label);
+  container.append(chip);
+ });
+ Object.defineProperty(container,'values',{get:getValues});
+ Object.defineProperty(container,'value',{
+  get:()=>getValues().join(','),
+  set:newVal=>{
+   selected.clear();
+   if(!newVal||newVal==='all'){
+    const allVal=opts.find(o=>o[0]===''||o[0]==='all')?.[0]??'';
+    selected.add(allVal);
+   }else{
+    String(newVal).split(',').map(s=>s.trim()).filter(Boolean).forEach(p=>selected.add(p));
+    if(selected.size===0)selected.add('');
+   }
+   updateClasses();
+  }
+ });
+ return container;
+};
+

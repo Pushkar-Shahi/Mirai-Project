@@ -154,9 +154,9 @@ async def create_user(
 # ------------------------------------------------------- notification history
 @router.get("/admin/notifications")
 async def notification_history(
-    kind: str | None = Query(None, max_length=80),
-    channel: Literal["in_app", "email", "whatsapp"] | None = None,
-    status: Literal["pending", "sending", "sent", "failed", "cancelled", "unread", "read"] | None = None,
+    kind: str | None = Query(None, max_length=200),
+    channel: str | None = None,
+    status: str | None = None,
     club_day_id: int | None = None,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -174,34 +174,40 @@ async def notification_history(
         params.append(user["campus_id"])
         where.append(f"u.campus_id=${len(params)}")
     if kind:
-        params.append(kind)
-        where.append(f"n.kind=${len(params)}")
+        kinds = [k.strip() for k in kind.split(",") if k.strip()]
+        params.append(kinds)
+        where.append(f"n.kind = ANY(${len(params)}::text[])")
     if club_day_id is not None:
         params.append(str(club_day_id))
         where.append(f"n.payload->>'club_day_id'=${len(params)}")
-    if channel in ("email", "whatsapp"):
-        params.append(channel)
-        ch = f"${len(params)}"
-        if status in ("pending", "sending", "sent", "failed", "cancelled"):
-            params.append(status)
-            where.append(f"EXISTS (SELECT 1 FROM notification_deliveries d WHERE d.notification_id=n.id "
-                         f"AND d.channel={ch} AND d.status=${len(params)})")
-        else:
-            where.append(f"EXISTS (SELECT 1 FROM notification_deliveries d WHERE d.notification_id=n.id AND d.channel={ch})")
-    elif status in ("pending", "sending", "sent", "failed", "cancelled"):
-        if status == "cancelled":
-            where.append("n.cancelled_at IS NOT NULL")
-        elif status == "pending":
-            where.append("(n.sent_at IS NULL AND n.cancelled_at IS NULL)")
-        elif status == "sent":
-            where.append("n.sent_at IS NOT NULL")
-        else:
-            params.append(status)
-            where.append(f"EXISTS (SELECT 1 FROM notification_deliveries d WHERE d.notification_id=n.id AND d.status=${len(params)})")
-    elif status == "unread":
-        where.append("n.read_at IS NULL")
-    elif status == "read":
-        where.append("n.read_at IS NOT NULL")
+
+    channels = [c.strip() for c in channel.split(",") if c.strip()] if channel else []
+    statuses = [s.strip() for s in status.split(",") if s.strip()] if status else []
+
+    if channels:
+        ext_channels = [c for c in channels if c in ("email", "whatsapp")]
+        if ext_channels:
+            params.append(ext_channels)
+            where.append(f"EXISTS (SELECT 1 FROM notification_deliveries d WHERE d.notification_id=n.id AND d.channel = ANY(${len(params)}::text[]))")
+
+    if statuses:
+        status_clauses = []
+        for st in statuses:
+            if st == "cancelled":
+                status_clauses.append("n.cancelled_at IS NOT NULL")
+            elif st == "pending":
+                status_clauses.append("(n.sent_at IS NULL AND n.cancelled_at IS NULL)")
+            elif st == "sent":
+                status_clauses.append("n.sent_at IS NOT NULL")
+            elif st == "unread":
+                status_clauses.append("n.read_at IS NULL")
+            elif st == "read":
+                status_clauses.append("n.read_at IS NOT NULL")
+            elif st in ("failed", "sending", "skipped"):
+                params.append(st)
+                status_clauses.append(f"EXISTS (SELECT 1 FROM notification_deliveries d WHERE d.notification_id=n.id AND d.status=${len(params)})")
+        if status_clauses:
+            where.append("(" + " OR ".join(status_clauses) + ")")
     cond = " AND ".join(where)
     total = await conn.fetchval(
         f"SELECT count(*) FROM notifications n JOIN users u ON u.id=n.user_id WHERE {cond}", *params

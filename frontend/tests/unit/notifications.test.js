@@ -140,7 +140,7 @@ describe.each([['campus-manager', 'campus_admin'], ['super-admin', 'super_admin'
     expect(view.textContent).toContain('101–120 of 120');
     expect(find(view, 'button', 'Next').disabled).toBe(true);
     expect(requests).toEqual([0, 50, 100]);
-    const channel = view.querySelector('select[aria-label=Channel]');
+    const channel = view.querySelector('[aria-label=Channel]');
     channel.value = 'email'; channel.dispatchEvent(new Event('change')); await settle();
     expect(requests.at(-1)).toBe('email');
     expect(view.textContent).toContain('1–3 of 3');

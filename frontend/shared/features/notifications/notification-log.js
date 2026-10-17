@@ -2,11 +2,11 @@ import {h,go} from '../../core/dom.js';
 import {api} from '../../core/api.js';
 import {me,roleLabel} from '../../core/state.js';
 import {fmt,STATUS} from '../../core/format.js';
-import {pill,card,heading,tbl,statGrid,picker} from '../../components/ui.js';
+import {pill,card,heading,tbl,statGrid,multiFilter} from '../../components/ui.js';
 import {KIND,kindLabel,noticeText} from './notice-text.js';
 
 // ---------- Notification history (campus managers and super admins) ----------
-export const notificationLogPage=async b=>{const kind=picker([['','All types'],...Object.entries(KIND)],{'aria-label':'Type'}),channel=picker([['','All channels'],['in_app','In-app'],['email','Email'],['whatsapp','WhatsApp']],{'aria-label':'Channel'}),status=picker([['','Any state'],['sent','Delivered in-app / sent'],['pending','Pending'],['failed','Failed'],['cancelled','Cancelled / outdated'],['unread','Unread'],['read','Read']],{'aria-label':'State'}),sumBox=h('div'),list=h('div'),pager=h('div',{class:'pager'});let offset=0;const limit=50;
+export const notificationLogPage=async b=>{const kind=multiFilter([['','All types'],...Object.entries(KIND)],{'aria-label':'Type'}),channel=multiFilter([['','All channels'],['in_app','In-app'],['email','Email'],['whatsapp','WhatsApp']],{'aria-label':'Channel'}),status=multiFilter([['','Any state'],['sent','Delivered in-app / sent'],['pending','Pending'],['failed','Failed'],['cancelled','Cancelled / outdated'],['unread','Unread'],['read','Read']],{'aria-label':'State'}),sumBox=h('div'),list=h('div'),pager=h('div',{class:'pager'});let offset=0;const limit=50;
  const load=async()=>{const q=new URLSearchParams({limit,offset});if(kind.value)q.set('kind',kind.value);if(channel.value)q.set('channel',channel.value);if(status.value)q.set('status',status.value);const r=await api('GET','/admin/notifications?'+q);
   const del={};r.deliveries.forEach(d=>{(del[d.channel]??={})[d.status]=d.n});
   sumBox.replaceChildren(statGrid([['Matching notifications',fmt.n(r.total)],['In-app delivered',fmt.n(r.in_app.delivered),`${fmt.n(r.in_app.read)} read · ${fmt.n(r.in_app.cancelled)} outdated`],...['email','whatsapp'].map(c=>[c==='email'?'Email':'WhatsApp',fmt.n(del[c]?.sent||0)+' sent',del[c]?Object.entries(del[c]).filter(([s])=>s!=='sent').map(([s,n])=>`${fmt.n(n)} ${STATUS[s]?.[0].toLowerCase()||s}`).join(' · ')||'no failures':'not used'])]));

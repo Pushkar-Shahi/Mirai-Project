@@ -3,7 +3,7 @@ import {api} from '../../core/api.js';
 import {me,roleLabel} from '../../core/state.js';
 import {fmt} from '../../core/format.js';
 import {STUDENT_CODE_RE,STUDENT_CODE_HINT} from '../../core/validation.js';
-import {card,heading,tbl,picker,clean} from '../../components/ui.js';
+import {card,heading,tbl,picker,clean,multiFilter} from '../../components/ui.js';
 import {frm} from '../../components/forms.js';
 
 // ---------- Administration: accounts and campuses. `extraCards` lets a portal add
@@ -13,7 +13,7 @@ export const createAdministrationPage=({extraCards=[]}={})=>async b=>{
         opts=campuses.map(c=>[c.id,c.name]),
         box=h('div'),
         search=h('input',{type:'search',placeholder:'Search name, email, student ID or employee ID','aria-label':'Search accounts'}),
-        roleF=picker([['','All roles'],['student','Students'],['coordinator','Coordinators'],['advisor','Advisors'],['campus_admin','Campus managers'],['super_admin','Super admins']],{'aria-label':'Role'});
+        roleF=multiFilter([['','All roles'],['student','Students'],['coordinator','Coordinators'],['advisor','Advisors'],['campus_admin','Campus managers'],['super_admin','Super admins']],{'aria-label':'Role'});
 
   for(const extra of extraCards)extra(b);
   const roles=me.role=='super_admin'?['student','coordinator','advisor','campus_admin','super_admin']:['student','coordinator','advisor'];
