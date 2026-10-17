@@ -31,10 +31,11 @@ async function main() {
   env.MIRAI_LOGIN_URL ||= '../login/';
   for (const portal of PORTALS) env[`MIRAI_PORTAL_URL_${portal.toUpperCase().replaceAll('-', '_')}`] ||= `../${portal}/`;
 
+  const demoAccounts = process.env.MIRAI_DEMO_ACCOUNTS !== '0';
   for (const site of ['login', ...PORTALS]) {
     const out = path.join(OUT_DIR, site);
     console.log(`  Building ${site} -> ${path.relative(ROOT, out)}`);
-    await buildPortal({portal: site, out, apiBaseUrl: API_URL, demo: undefined}, env);
+    await buildPortal({portal: site, out, apiBaseUrl: API_URL, demo: demoAccounts}, env);
   }
   await writeFile(path.join(OUT_DIR, 'index.html'),
     '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=login/"><title>Mirai</title><a href="login/">Sign in</a>\n');

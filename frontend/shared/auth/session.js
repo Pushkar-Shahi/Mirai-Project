@@ -35,13 +35,16 @@ export const safeNext=n=>typeof n==='string'&&SAFE_NEXT.test(n)?n:null;
 // Reads a one-time token (and the page the user wanted) from the address bar
 // (#handoff=…&next=…) and removes them so they are not left in history. Used when another
 // page sends this account to the portal for its role.
-export function takeHandoff(){
+export function takeHandoff(portal){
  const hash=location.hash||'';
  if(!hash.startsWith(HANDOFF))return{token:null,next:null};
  const q=new URLSearchParams(hash.slice(1));
+ const token=q.get('handoff')||null;
+ const next=safeNext(q.get('next'));
+ if(token&&portal)storeToken(portal,token);
  try{history.replaceState(null,'',location.pathname+location.search)}catch{}
- return{token:q.get('handoff')||null,next:safeNext(q.get('next'))}}
-export const takeHandoffToken=()=>takeHandoff().token;
+ return{token,next}}
+export const takeHandoffToken=portal=>takeHandoff(portal).token;
 
 // Opens the portal that serves this role, carrying the token in the fragment so it is
 // not sent to the server. `url` overrides the configured address (the local hub), `next`
@@ -49,6 +52,8 @@ export const takeHandoffToken=()=>takeHandoff().token;
 export function goToRolePortal(user,token,{url,next}={}){
  const destUrl=url||portalUrlForRole(user.role);
  if(!destUrl||!token)return false;
+ const home=portalForRole(user.role);
+ if(home)storeToken(home,token);
  const dest=new URL(destUrl,location.href),q=new URLSearchParams({handoff:token});
  if(safeNext(next))q.set('next',next);
  dest.hash=q.toString();

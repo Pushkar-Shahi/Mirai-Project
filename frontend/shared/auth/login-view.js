@@ -42,17 +42,20 @@ export function loginView(site, {message, onSignIn} = {}) {
     }
   }, 0, {draft: false});
 
-  const demo = runtimeConfig.demoLogins;
-  const demos = h('div', {class: 'demo-buttons'},
-    demo.map(([e, , l]) => h('button', {
-      type: 'button',
-      class: 's',
-      onclick: () => {
-        f.elements.identifier.value = e;
-        f.elements.password.value = runtimeConfig.demoPassword;
-      }
-    }, l))
-  );
+  const demo = runtimeConfig.demoLogins || [];
+  const demos = demo.length ? h('div', {class: 'demo-area'},
+    h('span', {}, `Demo accounts (${runtimeConfig.demoPassword}) · click to autofill:`),
+    h('div', {class: 'demo-buttons'},
+      demo.map(([e, , l]) => h('button', {
+        type: 'button',
+        class: 's',
+        onclick: () => {
+          f.elements.identifier.value = e;
+          f.elements.password.value = runtimeConfig.demoPassword;
+        }
+      }, l))
+    )
+  ) : null;
 
   const topHeader = h('header', {class: 'mirai-top-header'}, logo());
 
@@ -71,10 +74,7 @@ export function loginView(site, {message, onSignIn} = {}) {
           h('p', {class: 'card-subtitle'}, 'Use your Mirai account. After you sign in, you are taken to the site for your role.'),
           message && h('div', {class: 'notice wait', role: 'status'}, message),
           f,
-          demo.length ? h('div', {class: 'demo-area'},
-            h('span', {}, `Demo accounts · ${runtimeConfig.demoPassword} · each role opens its own portal (${runtimeConfig.environment} build only)`),
-            demos
-          ) : null,
+          demos,
           runtimeConfig.allowApiOverride && h('details', {class: 'api-setting'},
             h('summary', {}, 'Connection settings'),
             h('label', {}, 'API address',
