@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "serve dist-portals -s -l ${PORT:-5500}",
+    "start": "serve dist-portals -l ${PORT:-5500} -n",
     "build": "node scripts/build-all-portals.mjs",
     "cf:dev": "wrangler dev",
     "cf:deploy": "wrangler deploy",
