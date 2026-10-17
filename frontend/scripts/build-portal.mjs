@@ -38,6 +38,13 @@ const MARKER = 'build-info.json';
 const GENERATOR = 'mirai frontend/scripts/build-portal.mjs';
 const QR_LIBRARY_ORIGIN = 'https://cdnjs.cloudflare.com';
 
+// ---- PWA assets (frontend/public/) --------------------------------------------------
+const PUBLIC_DIR = path.join(FRONTEND, 'public');
+const PWA_MANIFEST_JSON_SRC = path.join(PUBLIC_DIR, 'manifest.json');
+const PWA_MANIFEST_SRC = path.join(PUBLIC_DIR, 'manifest.webmanifest');
+const PWA_SW_REGISTER_SRC = path.join(PUBLIC_DIR, 'sw-register.js');
+const PWA_ICONS_SRC = path.join(PUBLIC_DIR, 'icons');
+
 export class BuildError extends Error {}
 export {FRONTEND, APPS, SHARED};
 
@@ -286,6 +293,76 @@ async function verifyOutput(out, demo) {
   }
 }
 
+// ---- PWA injection ------------------------------------------------------------------
+/**
+ * After the main file copy, copies PWA assets into <outDir>/pwa/ and <outDir>/icons/
+ * and rewrites the built index.html to add <link rel="manifest">, theme-color meta,
+ * apple-touch-icon link, and the sw-register script tag.
+ *
+ * All injected src/href values are relative so the portal works from any sub-path.
+ */
+async function injectPwaAssets(outDir) {
+  // Destination directories inside the build output.
+  const pwaOut = path.join(outDir, 'pwa');
+  const iconsOut = path.join(outDir, 'icons');
+  await mkdir(pwaOut, {recursive: true});
+  await mkdir(iconsOut, {recursive: true});
+
+  // Copy manifest to both <outDir>/manifest.json and <outDir>/pwa/
+  if (existsSync(PWA_MANIFEST_JSON_SRC)) {
+    await cp(PWA_MANIFEST_JSON_SRC, path.join(outDir, 'manifest.json'));
+    await cp(PWA_MANIFEST_JSON_SRC, path.join(pwaOut, 'manifest.json'));
+  }
+  if (existsSync(PWA_MANIFEST_SRC)) {
+    await cp(PWA_MANIFEST_SRC, path.join(outDir, 'manifest.webmanifest'));
+    await cp(PWA_MANIFEST_SRC, path.join(pwaOut, 'manifest.webmanifest'));
+  }
+
+  // Copy sw-register.js to both <outDir>/ and <outDir>/pwa/
+  if (existsSync(PWA_SW_REGISTER_SRC)) {
+    await cp(PWA_SW_REGISTER_SRC, path.join(outDir, 'sw-register.js'));
+    await cp(PWA_SW_REGISTER_SRC, path.join(pwaOut, 'sw-register.js'));
+  }
+
+  // Resolve icons source
+  if (existsSync(PWA_ICONS_SRC)) await cp(PWA_ICONS_SRC, iconsOut, {recursive: true});
+
+  // Patch the built index.html to add PWA meta tags and the SW registration script.
+  const indexOut = path.join(outDir, 'index.html');
+  if (!existsSync(indexOut)) return; // safety; verifyOutput will catch missing index.
+  let html = await readFile(indexOut, 'utf8');
+
+  const pwaTags = [
+    // Manifest
+    '<link rel="manifest" href="./manifest.json">',
+    // Theme colour (matches CSS --brand)
+    '<meta name="theme-color" content="#00d2ff">',
+    // Apple home-screen icon
+    '<link rel="apple-touch-icon" href="./icons/icon-192.png">',
+    // PWA capable flags
+    '<meta name="mobile-web-app-capable" content="yes">',
+    '<meta name="apple-mobile-web-app-capable" content="yes">',
+    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">',
+  ].join('');
+
+  // Insert before </head> (or at start of <head> if pattern not found).
+  if (html.includes('</head>')) {
+    html = html.replace('</head>', pwaTags + '</head>');
+  } else {
+    html = html.replace('<head>', '<head>' + pwaTags);
+  }
+
+  // Append the SW registration script just before </body>.
+  const swScript = '<script src="./sw-register.js"></script>';
+  if (html.includes('</body>')) {
+    html = html.replace('</body>', swScript + '</body>');
+  } else {
+    html += swScript;
+  }
+
+  await writeFile(indexOut, html);
+}
+
 // ---- main ----------------------------------------------------------------------------
 export async function buildPortal({portal: portalId, out, apiBaseUrl, demo}, env = process.env) {
   const portal = portalId === LOGIN_SITE.id ? LOGIN_SITE : PORTALS.find(p => p.id === portalId);
@@ -320,6 +397,7 @@ export async function buildPortal({portal: portalId, out, apiBaseUrl, demo}, env
     branch: env.CF_PAGES_BRANCH || null,
     files: files.length,
   }, null, 2) + '\n');
+  await injectPwaAssets(outDir);
   await verifyOutput(outDir, demoLogins);
   return {portal, outDir, api, files: files.length, demoLogins};
 }
