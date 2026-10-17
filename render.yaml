@@ -38,8 +38,6 @@ services:
   - type: web
     name: club-tracker-portals
     runtime: static
-    plan: free
-    region: singapore
     buildCommand: npm run build
     staticPublishPath: ./dist-portals
     headers:
