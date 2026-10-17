@@ -38,7 +38,7 @@ services:
   - type: web
     name: club-tracker-portals
     runtime: static
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: ./dist-portals
     headers:
       - path: /*
