@@ -30,7 +30,7 @@ export function installFetch(role, mode = 'success', extra = {}) {
     const u = new URL(url), method = opts.method || 'GET', key = `${method} ${u.pathname}${u.search}`;
     calls.push(key);
     if (mode === 'network') throw new TypeError('Failed to fetch');
-    if (extra[key]) { const r = typeof extra[key] === 'function' ? extra[key](opts) : extra[key]; return response(r.status ?? 200, r.body ?? r); }
+    if (extra[key]) { const r = typeof extra[key] === 'function' ? extra[key](opts) : extra[key]; return 'body' in r && typeof r.status === 'number' ? response(r.status, r.body) : response(200, r); }
     if (key === 'GET /auth/me') return response(200, data[key]);
     if (typeof mode === 'number') return response(mode, {detail: DETAIL[mode]});
     if (key in data) return response(200, mode === 'empty' ? emptied(data[key]) : data[key]);

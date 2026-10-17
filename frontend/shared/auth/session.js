@@ -29,7 +29,7 @@ export const portalUrlForRole=role=>{
 // A hash we are willing to open after sign-in: a page route such as #/Grading or
 // #/Check-in?session=3. Anything else (other origins, scripts) is dropped, so a crafted
 // link cannot use the handoff as an open redirect.
-const SAFE_NEXT=/^#\/[\w -]{1,40}(\?[\w=&%.,:-]{0,200})?$/;
+const SAFE_NEXT=/^#\/[\w %-]{1,60}(\?[\w=&%.,:-]{0,200})?$/;
 export const safeNext=n=>typeof n==='string'&&SAFE_NEXT.test(n)?n:null;
 
 // Reads a one-time token (and the page the user wanted) from the address bar
@@ -57,8 +57,8 @@ export function goToRolePortal(user,token,{url,next}={}){
 
 // Where a portal sends a visitor who has no session (or whose session ended) when a
 // central sign-in site is configured. Returns false when it is not.
-export function goToLogin({reason,next}={}){
- const base=runtimeConfig.loginUrl;
+export function goToLogin({reason,next,url=runtimeConfig.loginUrl}={}){
+ const base=url;
  if(!base)return false;
  const dest=new URL(base,location.href);
  if(reason)dest.searchParams.set('reason',reason);

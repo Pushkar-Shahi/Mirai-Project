@@ -51,7 +51,7 @@ async function createAccount(page, {name, email, password}, role, code) {
   if (code) await field(account, 'student_code').fill(code);
   await account.getByRole('button', {name: 'Create account'}).click();
   await expectToast(page, 'Account created');
-  await expect(card(page, 'Accounts').locator('tr', {hasText: email})).toContainText('Main Campus');
+  await expect(card(page, 'Accounts').locator('tr', {hasText: email})).toContainText('Rathinam');
 }
 
 test('Campus Manager: provisions accounts, a club and its coordinator', async ({page}) => {

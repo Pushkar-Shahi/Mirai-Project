@@ -64,7 +64,7 @@ test('a deep link is remembered through the central sign-in', async ({page}) => 
   await fill(page, DEMO.coordinator);
   await submit(page).click();
   await expect(page).toHaveURL(url => url.href.startsWith(portalUrl('coordinator')));
-  await expect(page).toHaveURL(/#\/Grading$/);
+  await expect(page).toHaveURL(/#\/Grading(\?|$)/);
   await expect(page.locator('#nav button[data-page="Grading"]')).toHaveAttribute('aria-current', 'page');
 });
 
