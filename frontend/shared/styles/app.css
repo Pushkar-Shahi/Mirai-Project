@@ -254,9 +254,16 @@ body.mirai-auth-body {
   align-items: center;
 }
 
-.mirai-logo-wrap {
-  display: flex;
-  align-items: center;
+.mirai-brand-logo-img {
+  display: block;
+  height: 34px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.sidebar .mirai-brand-logo-img {
+  height: 28px;
 }
 
 .mirai-auth-body .login-screen {

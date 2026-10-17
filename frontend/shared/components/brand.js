@@ -1,32 +1,16 @@
 import {h} from '../core/dom.js';
 
-export const miraiLogoSvg = () => `
-<svg class="mirai-logo-svg" width="168" height="34" viewBox="0 0 168 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="miraiDotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00f2fe"/>
-      <stop offset="100%" stop-color="#0ea5e9"/>
-    </linearGradient>
-  </defs>
-  <g transform="translate(1, 2)">
-    <!-- Cyan glowing dot at bottom left -->
-    <circle cx="7" cy="20" r="4.2" fill="url(#miraiDotGrad)"/>
-    <!-- Connected ribbon / wave nodes -->
-    <path d="M7 20 C11 13, 15 8, 20 8 C24 8, 26.5 10.5, 25.5 15 C24.5 19, 19 21, 15 18" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-    <path d="M20 8 C25 8, 28 12, 32 20" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-    <path d="M25.5 15 C28.5 10, 32.5 7.5, 36.5 7.5 C40.5 7.5, 42.5 10, 41.5 14 C40.5 18, 36 21, 32 20" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-    <circle cx="40" cy="10" r="3" fill="#ffffff"/>
-  </g>
-  <!-- Bold Mirai typography -->
-  <text x="49" y="24" fill="#ffffff" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="-0.5">Mirai</text>
-  <!-- Stacked subtext: SCHOOL OF TECHNOLOGY -->
-  <text x="110" y="15" fill="#94a3b8" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="5.8" font-weight="800" letter-spacing="0.8">SCHOOL OF</text>
-  <text x="110" y="23" fill="#94a3b8" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="5.8" font-weight="800" letter-spacing="0.8">TECHNOLOGY</text>
-</svg>
-`;
+export const MIRAI_LOGO_SRC = 'data:image/png;base64,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';
 
 export const logo = (options = {}) => {
   const brand = h('div', {class: `brand ${options.className || ''}`});
-  brand.innerHTML = miraiLogoSvg();
+  const img = h('img', {
+    src: MIRAI_LOGO_SRC,
+    alt: 'Mirai School of Technology',
+    class: 'mirai-brand-logo-img',
+    height: options.height || 34,
+    style: 'display: block; height: ' + (options.height || 34) + 'px; width: auto; max-width: 100%; object-fit: contain;'
+  });
+  brand.appendChild(img);
   return brand;
 };
