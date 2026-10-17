@@ -8,7 +8,7 @@
 //
 // MIRAI_API_BASE_URL is required. There is deliberately no default: a silent fallback to a
 // demo API once made every deployed tab talk to the wrong, out-of-date server.
-import {mkdir, writeFile} from 'node:fs/promises';
+import {mkdir, writeFile, cp} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildPortal} from '../frontend/scripts/build-portal.mjs';
@@ -37,6 +37,21 @@ async function main() {
     console.log(`  Building ${site} -> ${path.relative(ROOT, out)}`);
     await buildPortal({portal: site, out, apiBaseUrl: API_URL, demo: demoAccounts}, env);
   }
+  // Provide root /shared/ so non-trailing-slash requests (/login) or root references
+  // always load the production runtime-config with the real API URL instead of any stale dev fallback.
+  await cp(path.join(OUT_DIR, 'login', 'shared'), path.join(OUT_DIR, 'shared'), {recursive: true});
+
+  // Normalize URLs so trailing slashes are consistently maintained
+  const redirects = [
+    '/login /login/ 301',
+    '/campus-manager /campus-manager/ 301',
+    '/student /student/ 301',
+    '/super-admin /super-admin/ 301',
+    '/coordinator /coordinator/ 301',
+    '/advisor /advisor/ 301'
+  ].join('\n') + '\n';
+  await writeFile(path.join(OUT_DIR, '_redirects'), redirects);
+
   await writeFile(path.join(OUT_DIR, 'index.html'),
     '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=login/"><title>Mirai</title><a href="login/">Sign in</a>\n');
   console.log(`Built the sign-in site and ${PORTALS.length} portals into ${OUT_DIR}`);
