@@ -1,4 +1,4 @@
-import {h,toast,go} from '../../core/dom.js';
+import {h,toast,go,setChildren} from '../../core/dom.js';
 import {api,dl} from '../../core/api.js';
 import {fmt} from '../../core/format.js';
 import {half,heading,btn,tbl} from '../../components/ui.js';
@@ -11,7 +11,7 @@ export function importCard(clubs){const report=h('div'),file=h('input',{type:'fi
   const fd=new FormData();fd.append('club_ids',ids.join(','));fd.append('file',file.files[0]);
   try{const r=await api('POST','/club-days/import'+(dry?'?dry_run=true':''),null,fd);showReport(r,dry);return r}catch(e){if(e.detail?.report)showReport(e.detail.report,dry,e.message);throw e}};
  function showReport(r,dry,message){const ok=!r.errors?.length;checked=ok&&dry?file.files[0]:null;importBtn.disabled=!checked;
-  report.replaceChildren(h('div',{class:'notice '+(ok?'good':'alert')},message||(dry?(ok?`File looks good: ${r.valid_rows} valid row${r.valid_rows===1?'':'s'}; ${r.would_create} Club Day${r.would_create===1?'':'s'} would be created and ${r.skipped} skipped as duplicates. Nothing has been saved yet.`:`${r.invalid_rows} row(s) need fixing before import.`):`Imported ${r.created} Club Day${r.created===1?'':'s'}; skipped ${r.skipped} duplicate${r.skipped===1?'':'s'}.`)),
+  setChildren(report,h('div',{class:'notice '+(ok?'good':'alert')},message||(dry?(ok?`File looks good: ${r.valid_rows} valid row${r.valid_rows===1?'':'s'}; ${r.would_create} Club Day${r.would_create===1?'':'s'} would be created and ${r.skipped} skipped as duplicates. Nothing has been saved yet.`:`${r.invalid_rows} row(s) need fixing before import.`):`Imported ${r.created} Club Day${r.created===1?'':'s'}; skipped ${r.skipped} duplicate${r.skipped===1?'':'s'}.`)),
    r.errors?.length?[h('h4',{},'Rows to fix'),tbl(r.errors,[['Line','line'],['Problems',e=>e.errors.join('; ')]])]:null,
    r.warnings?.length?[h('h4',{},'Warnings'),tbl(r.warnings,[['Line','line'],['Note','warning']])]:null,
    r.per_club?.length?[h('h4',{},'Per club'),tbl(r.per_club,[['Club','club_name'],[dry?'Would create':'Created','created'],['Skipped (duplicates)','skipped']])]:null,

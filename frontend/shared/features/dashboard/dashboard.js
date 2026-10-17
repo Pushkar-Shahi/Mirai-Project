@@ -1,4 +1,4 @@
-import {h,go} from '../../core/dom.js';
+import {h,go,setChildren} from '../../core/dom.js';
 import {api,dl} from '../../core/api.js';
 import {me} from '../../core/state.js';
 import {fmt,STATUS} from '../../core/format.js';
@@ -25,10 +25,10 @@ export const createDashboardPage=({extraSections=[]}={})=>async b=>{
  b.append(mo,ia,zp,tc,st);
  const mi=h('input',{type:'month',value:new Date().toISOString().slice(0,7),'aria-label':'Month',style:'max-width:180px'}),mb=h('div');
  const lm=async()=>{if(!/^\d{4}-\d{2}$/.test(mi.value))throw new Error('Choose a month');const r=await api('GET','/dashboards/monthly-report?month='+encodeURIComponent(mi.value)),t=r.totals;
-  mb.replaceChildren(h('div',{class:'notice '+(r.reconciled?'good':'alert')},r.reconciled?'The per-club figures add up to the raw totals.':'The per-club figures do not match the raw totals: '+r.mismatches.map(m=>`${COL_LABELS[m.metric]||m.metric}: clubs ${fmt.n(m.sum_of_clubs)} vs raw ${fmt.n(m.raw_total)}`).join('; ')),
+  setChildren(mb,h('div',{class:'notice '+(r.reconciled?'good':'alert')},r.reconciled?'The per-club figures add up to the raw totals.':'The per-club figures do not match the raw totals: '+r.mismatches.map(m=>`${COL_LABELS[m.metric]||m.metric}: clubs ${fmt.n(m.sum_of_clubs)} vs raw ${fmt.n(m.raw_total)}`).join('; ')),
    statGrid([['Club Days',fmt.n(t.club_days)],['Check-ins',fmt.n(t.attendance_records)],['Unique attendees',fmt.n(t.unique_attendees_overall)],['Attendance rate',fmt.pct(t.attendance_percentage)],['Submissions',fmt.n(t.submissions)],['Average score',fmt.score(t.average_score)],['Certificates',fmt.n(t.certificates)]]),
    h('h4',{},'Per club'),tbl(r.clubs,autoCols(r.clubs,['club_name','club_days','attendance_records','unique_attendees','attendance_percentage','submissions','average_score','certificates','highlight']),'No clubs in your scope'),
-   r.highlights?.length?[h('h4',{},'Highlights'),h('ul',{class:'timeline'},r.highlights.map(x=>h('li',{},h('strong',{},x.club_name),` · ${x.highlight} · average score ${fmt.score(x.average_score)} · ${fmt.n(x.submissions)} submissions`)))]:null)};
+   ...(r.highlights?.length?[h('h4',{},'Highlights'),h('ul',{class:'timeline'},r.highlights.map(x=>h('li',{},h('strong',{},x.club_name),` · ${x.highlight} · average score ${fmt.score(x.average_score)} · ${fmt.n(x.submissions)} submissions`)))]:[]))};
  mi.onchange=()=>go(lm);mo.append(h('div',{class:'filters'},h('label',{},'Month',mi),btn('Download CSV',()=>dl('/dashboards/export/monthly-report?month='+encodeURIComponent(mi.value),'report-'+mi.value+'.csv'),'s')),mb);
  const wk=h('input',{type:'number',value:4,min:1,max:104,'aria-label':'Weeks',style:'max-width:110px'}),ib=h('div'),li=async()=>{const r=await api('GET','/dashboards/inactive-clubs?weeks='+(+wk.value||4));ib.replaceChildren(tbl(r,[['Club','club_name'],['Members',x=>fmt.n(x.members)],['Last Club Day',x=>x.last_club_day?fmt.date(x.last_club_day):'Never']],'Every club has been active'))};wk.onchange=()=>go(li);ia.append(h('div',{class:'filters'},h('label',{},'Weeks',wk)),ib);
  await Promise.all([lm(),li(),(async()=>{const z=await api('GET','/dashboards/zero-participation');zp.append(h('p',{class:'mut'},`${fmt.n(z.length)} student${z.length===1?'':'s'}`),tbl(z,[['Student','name'],['Student ID','student_code']],'Everyone has taken part'))})(),
