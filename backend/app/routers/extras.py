@@ -336,6 +336,55 @@ async def student_transcript(student_ref: str, user: dict = Depends(require_perm
     return await _transcript(conn, student["id"])
 
 
+@router.get("/transcripts/{student_ref}.csv")
+async def student_transcript_csv(student_ref: str, user: dict = Depends(require_permission("transcript.view_any")),
+                                 conn=Depends(get_conn)):
+    ref = student_ref.strip()
+    if not is_student_code(ref):
+        raise HTTPException(422, "Invalid student reference")
+    student = await conn.fetchrow(
+        """SELECT id, campus_id, role FROM users WHERE role='student' AND upper(student_code)=upper($1)
+           ORDER BY (student_code=$1) DESC, id LIMIT 1""", ref)
+    if student is None and ref.isdigit() and len(ref) < 19:
+        student = await conn.fetchrow(
+            "SELECT id, campus_id, role FROM users WHERE id=$1 AND role='student'", int(ref))
+    if student is None or (user["role"] != "super_admin" and student["campus_id"] != user["campus_id"]):
+        raise HTTPException(404, "Student not found")
+    data = await _transcript(conn, student["id"])
+    stream = io.StringIO()
+    writer = csv.writer(stream)
+    writer.writerow(["Student Name", data["student"].get("name", "")])
+    writer.writerow(["Student ID", data["student"].get("student_code", "")])
+    writer.writerow(["Campus", data["student"].get("campus", "")])
+    writer.writerow([])
+    totals = data.get("totals", {})
+    writer.writerow(["Metric", "Value"])
+    writer.writerow(["Club Days attended", totals.get("club_days_attended", 0)])
+    writer.writerow(["Submissions", totals.get("submissions", 0)])
+    writer.writerow(["Average score", totals.get("average_score", "")])
+    writer.writerow(["Presentations", totals.get("presentations", 0)])
+    writer.writerow(["Events attended", totals.get("events_attended", 0)])
+    writer.writerow(["Certificates", totals.get("certificates", 0)])
+    writer.writerow([])
+    writer.writerow(["type", "title", "organization", "date", "attendance", "submission",
+                     "score", "presentation", "rank", "certificate"])
+    safe = lambda v: "" if v is None else ("'" + str(v) if str(v)[:1] in ("=", "+", "-", "@") else str(v))
+    for row in data.get("club_days", []):
+        score = f"{row['score']}/{data['totals']['max_score']}" if row.get("score") is not None else ""
+        writer.writerow([safe(x) for x in (
+            "Club day", row.get("title") or row.get("topic") or "Club Day", row.get("club_name", ""), row.get("day_date", ""),
+            ("attended (late)" if row.get("checked_in_late") else "attended") if row.get("attendance_count") else "not checked in",
+            (row.get("grading_status") or "").replace("_", " "), score, row.get("presentation_title") or "", "",
+            row.get("certificate_status") or "")])
+    for row in data.get("events", []):
+        writer.writerow([safe(x) for x in (
+            "Event", row.get("name", ""), row.get("host_campus", ""), row.get("starts_at", ""),
+            "checked in" if row.get("checked_in_at") else "registered", "", "", row.get("team_name") or "",
+            row.get("rank") or "", row.get("certificate_status") or "")])
+    return StreamingResponse(iter([stream.getvalue()]), media_type="text/csv",
+      headers={"Content-Disposition": f"attachment; filename=transcript-{ref}.csv"})
+
+
 @router.post("/events/{event_id}/media", status_code=201)
 async def upload_event_media(event_id: int, consent_to_publish: bool = Form(...), file: UploadFile = File(...),
                              user: dict = Depends(current_user), conn=Depends(get_conn)):
