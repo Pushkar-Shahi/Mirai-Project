@@ -203,3 +203,17 @@ exists only in development.
 | Builds send a Content-Security-Policy and other security headers (`_headers`) | Limits where scripts can come from and where data can be sent |
 | No demo logins and no API override in production builds | Requirement: no demo credentials on production pages |
 | The API address is fixed at build time; there is no `localhost` fallback in builds | Requirement: no hardcoded development address in production |
+
+## 6. Central sign-in (current flow; supersedes section 4 where they differ)
+
+One screen, one module. `shared/auth/login-view.js` draws the sign-in screen and every site uses it: the five portals and the central sign-in site `frontend/login` (build it with `node frontend/scripts/build-portal.mjs login`). The copy, layout, fonts and colours are the same as the signed-in application because both use `shared/styles/app.css`. The screen names no portal.
+
+1. **Sign in.** `POST /auth/login`. The button is disabled and reads "Signing in…" while the request runs; Enter submits; a wrong password shows the API message under the form.
+2. **Role from the server.** The central site calls `GET /auth/me` with the new token and opens the portal for the role it returns (never a role from browser storage). The token travels in the URL fragment (`#handoff=…`), which is not sent to any server, and is removed from the address bar on arrival.
+3. **Wrong portal.** Signing in on a portal that does not serve the account's role opens that role's portal the same way (or shows the wrong-portal screen if the address is not configured).
+4. **Remembered page.** The wanted page rides along as `next` (`#/Grading`). It is accepted only if it looks like a page route, so a crafted link cannot redirect elsewhere, and only if the target portal has that page.
+5. **Expiry and sign-out.** Tokens last 8 hours. A 401 shows "Your session has expired. Please sign in again." and keeps the current page for after sign-in. Sign-out clears the token and shows "You have been signed out."
+6. **Central or embedded.** With `MIRAI_LOGIN_URL` set at build time, portals send visitors without a session to the central site (`?reason=expired|signed_out&next=…`). Without it the portal shows the same screen itself. `MIRAI_PORTAL_URL_*` may be absolute https URLs or relative paths (`../student/`) when everything is on one origin; `scripts/build-all-portals.mjs` does the latter.
+7. **Kept as before.** "Connection settings" and the demo-account hint appear only in development or demo builds (`MIRAI_DEMO_ACCOUNTS=1`).
+
+The old `unified-login/` page and the `frontend/hub` page (own stylesheet, hardcoded local ports and a hardcoded demo API) are removed.

@@ -110,6 +110,7 @@ deployments. None of these are secret; their values end up in the public site.
 | Variable | Value | Required |
 |---|---|---|
 | `MIRAI_API_BASE_URL` | The shared API, e.g. `https://club-tracker-demo-api.onrender.com` | Yes. The build fails without it. |
+| `MIRAI_LOGIN_URL` | Address of the central sign-in site (build it with `build-portal.mjs login`). When set, portals send signed-out and expired visitors there. | No |
 | `NODE_VERSION` | e.g. `22` (the default build image already has Node 22) | No |
 | `MIRAI_PORTAL_URL_SUPER_ADMIN`, `_CAMPUS_MANAGER`, `_ADVISOR`, `_COORDINATOR`, `_STUDENT` | Each portal's public address, e.g. `https://mirai-student.pages.dev` | No. Lets the wrong-portal screen link to the right portal. Set the same five values in every project. |
 | `MIRAI_DEMO_ACCOUNTS` | `1` shows the seeded demo logins on the sign-in screen | Only for a demo environment. Never in production. |
