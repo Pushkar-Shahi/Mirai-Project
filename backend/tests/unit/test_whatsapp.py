@@ -35,3 +35,12 @@ def test_whatsapp_configuration_builds_versioned_cloud_api_url(monkeypatch):
     assert config["url"] == "https://graph.facebook.com/v23.0/123456789/messages"
     assert config["template"] == "club_update"
     assert config["language"] == "en_US"
+
+
+def test_whatsapp_configuration_builds_bridge_url(monkeypatch):
+    monkeypatch.setenv("WHATSAPP_BRIDGE_URL", "http://127.0.0.1:3001")
+    config = whatsapp_config()
+    assert config["mode"] == "bridge"
+    assert config["url"] == "http://127.0.0.1:3001/send"
+    assert config["status_url"] == "http://127.0.0.1:3001/status"
+
