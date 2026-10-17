@@ -216,3 +216,443 @@ td{overflow-wrap:break-word}
 /* Role portals: a link styled as the primary button (role-mismatch screen). */
 .button-link{display:inline-flex;align-items:center;border-radius:11px;padding:10px 15px;margin:3px;background:linear-gradient(135deg,var(--brand),#747af0);color:#fff;font-weight:700;font-size:12px;letter-spacing:.01em;text-decoration:none;box-shadow:0 5px 12px rgba(90,99,232,.16);transition:box-shadow .2s}
 .button-link:hover{box-shadow:0 8px 17px rgba(90,99,232,.22)}
+
+/* ==========================================================================
+   Mirai School of Technology — Signature Auth Theme
+   ========================================================================== */
+body.mirai-auth-body {
+  background: #060814 !important;
+  color: #f8fafc !important;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 10% 15%, rgba(14, 165, 233, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(37, 99, 235, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, transparent 100%) !important;
+  background-attachment: fixed !important;
+}
+
+.mirai-top-header {
+  background: #050712;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.mirai-auth-body .brand {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mirai-logo-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.mirai-auth-body .login-screen {
+  min-height: calc(100vh - 63px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(380px, 0.88fr);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 32px 50px;
+  gap: 56px;
+  align-items: center;
+  background: transparent !important;
+}
+
+.mirai-auth-body .login-story {
+  min-height: auto;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+}
+
+.mirai-auth-body .login-story:before,
+.mirai-auth-body .login-story:after {
+  display: none !important;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  margin-bottom: 22px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00d2ff;
+  box-shadow: 0 0 8px #00d2ff;
+}
+
+.mirai-auth-body .story-copy {
+  margin: 0 0 16px;
+  max-width: 580px;
+}
+
+.mirai-auth-body .story-copy h1 {
+  font-size: clamp(34px, 4.2vw, 54px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1.2px;
+  color: #ffffff;
+  margin: 0 0 16px;
+}
+
+.ai-gradient {
+  background: linear-gradient(135deg, #00d2ff 0%, #38bdf8 50%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  color: #94a3b8;
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 500px;
+  margin: 0 0 28px;
+}
+
+.hero-info-card {
+  background: linear-gradient(180deg, rgba(12, 20, 38, 0.82) 0%, rgba(8, 14, 28, 0.65) 100%);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  border-radius: 18px;
+  padding: 20px 24px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  max-width: 520px;
+  margin-bottom: 26px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-row:first-child {
+  padding-top: 2px;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 2px;
+}
+
+.info-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.28);
+  display: grid;
+  place-items: center;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.info-text {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.info-highlight {
+  color: #00d2ff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cyan-bright {
+  color: #00d2ff;
+  font-weight: 700;
+}
+
+.hero-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.check-box {
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  background: rgba(6, 182, 212, 0.14);
+  border: 1px solid rgba(6, 182, 212, 0.38);
+  color: #00d2ff;
+  font-size: 11px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.mirai-auth-body .story-footer {
+  display: none;
+}
+
+.mirai-auth-body .login-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.mirai-auth-body .login-card {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(11, 15, 27, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: clamp(26px, 4vw, 36px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65), 0 0 35px rgba(6, 182, 212, 0.03);
+  backdrop-filter: blur(20px);
+}
+
+.card-alert-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.alert-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+  flex-shrink: 0;
+}
+
+.mirai-auth-body .login-card h2 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.card-subtitle {
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 0 0 20px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.auth-tab {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 4px 12px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+}
+
+.auth-tab.active {
+  color: #ffffff;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ef4444;
+  border-radius: 2px;
+}
+
+.mirai-auth-body .login-card label {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.mirai-auth-body .login-card form input[type="text"],
+.mirai-auth-body .login-card form input[type="password"] {
+  background: rgba(16, 22, 36, 0.82) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  color: #f8fafc !important;
+  font-size: 14px !important;
+  padding: 13px 16px !important;
+  margin-top: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s !important;
+}
+
+.mirai-auth-body .login-card form input::placeholder {
+  color: #64748b !important;
+}
+
+.mirai-auth-body .login-card form input:focus {
+  outline: none !important;
+  border-color: #00d2ff !important;
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.15) !important;
+  background: rgba(20, 28, 46, 0.95) !important;
+}
+
+.agree-consent {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
+  color: #cbd5e1 !important;
+  margin: 16px 0 20px !important;
+  cursor: pointer !important;
+  font-weight: 400 !important;
+}
+
+.agree-consent input[type="checkbox"] {
+  margin-top: 3px !important;
+  accent-color: #00d2ff !important;
+  width: auto !important;
+}
+
+.mirai-auth-body .login-card form button[type="submit"] {
+  width: 100% !important;
+  border: none !important;
+  border-radius: 12px !important;
+  background: linear-gradient(90deg, #1d4ed8 0%, #0284c7 50%, #00d2ff 100%) !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  padding: 14px !important;
+  cursor: pointer !important;
+  transition: transform 0.15s, box-shadow 0.2s !important;
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.35) !important;
+  margin-top: 4px !important;
+}
+
+.mirai-auth-body .login-card form button[type="submit"]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 26px rgba(0, 210, 255, 0.45) !important;
+}
+
+.mirai-auth-body .demo-area {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mirai-auth-body .demo-area span {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.mirai-auth-body .demo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mirai-auth-body .demo-buttons button {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 6px 10px !important;
+  transition: all 0.2s !important;
+  cursor: pointer !important;
+}
+
+.mirai-auth-body .demo-buttons button:hover {
+  background: rgba(6, 182, 212, 0.15) !important;
+  border-color: #00d2ff !important;
+  color: #ffffff !important;
+}
+
+.mirai-auth-body .spotlight-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mirai-auth-body .spotlight-head .theme-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 960px) {
+  .mirai-auth-body .login-screen {
+    grid-template-columns: 1fr;
+    padding: 24px 20px 40px;
+    gap: 36px;
+  }
+  .mirai-top-header {
+    padding: 12px 20px;
+  }
+}
+
