@@ -81,9 +81,10 @@ async def list_users(
 ):
     if role is not None and role not in USER_ROLES:
         raise HTTPException(422, "Unknown role")
-    params: list = [role, f"%{q.strip()}%" if q and q.strip() else None]
+    numeric_id = int(q.strip()) if q and q.strip().isdigit() and len(q.strip()) < 19 else None
+    params: list = [role, f"%{q.strip()}%" if q and q.strip() else None, numeric_id]
     where = ["($1::text IS NULL OR u.role=$1)",
-             "($2::text IS NULL OR u.name ILIKE $2 OR u.student_code ILIKE $2 OR u.email ILIKE $2)"]
+             "($2::text IS NULL OR u.name ILIKE $2 OR u.student_code ILIKE $2 OR u.email ILIKE $2 OR ($3::bigint IS NOT NULL AND u.id = $3))"]
     if user["role"] != "super_admin":
         params.append(user["campus_id"])
         where.append(f"u.campus_id=${len(params)}")

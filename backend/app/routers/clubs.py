@@ -319,14 +319,32 @@ async def add_coordinator(
     conn=Depends(get_conn),
 ):
     club = await assert_club_access(conn, user, club_id, allow=ADMIN_ROLES)
-    target = await conn.fetchrow("SELECT role, campus_id FROM users WHERE id=$1", body.user_id)
-    if target is None or target["role"] != "coordinator" or target["campus_id"] != club["campus_id"]:
-        raise HTTPException(422, "User must be a coordinator on the club's campus")
+    if club["approval_status"] != "approved":
+        raise HTTPException(422, f"Club '{club['name']}' is not approved (status: {club['approval_status']})")
+    if not club["is_active"]:
+        raise HTTPException(422, f"Club '{club['name']}' is currently inactive")
+
+    target = await conn.fetchrow("SELECT id, name, role, campus_id, email FROM users WHERE id=$1", body.user_id)
+    if target is None:
+        raise HTTPException(404, "Coordinator account not found")
+    if target["role"] != "coordinator":
+        raise HTTPException(422, f"Account '{target['name']}' has role '{target['role']}', but must have the Club coordinator role")
+    if target["campus_id"] != club["campus_id"]:
+        coord_campus = await conn.fetchval("SELECT name FROM campus WHERE id=$1", target["campus_id"])
+        club_campus = await conn.fetchval("SELECT name FROM campus WHERE id=$1", club["campus_id"])
+        raise HTTPException(422, f"Campus mismatch: coordinator '{target['name']}' belongs to {coord_campus or 'unknown'}, but club '{club['name']}' belongs to {club_campus or 'unknown'}")
+
+    existing = await conn.fetchval("SELECT 1 FROM club_coordinators WHERE club_id=$1 AND user_id=$2", club_id, body.user_id)
+    if existing:
+        raise HTTPException(409, f"'{target['name']}' is already assigned as a coordinator for '{club['name']}'")
+
     await conn.execute(
-        "INSERT INTO club_coordinators (club_id, user_id) VALUES ($1,$2) ON CONFLICT DO NOTHING",
+        "INSERT INTO club_coordinators (club_id, user_id) VALUES ($1,$2)",
         club_id, body.user_id,
     )
-    return {"club_id": club_id, "user_id": body.user_id}
+    await audit.log(conn, actor_id=user["id"], action="club.coordinator_add", entity="clubs",
+                    entity_id=club_id, after={"user_id": body.user_id, "name": target["name"]})
+    return {"club_id": club_id, "user_id": body.user_id, "name": target["name"]}
 
 
 @router.delete("/{club_id}/coordinators/{user_id}")
