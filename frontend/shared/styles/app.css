@@ -540,3 +540,363 @@ body.mirai-auth-body {
   }
 }
 
+/* ==========================================================================
+   MULTI-DEVICE RESPONSIVE OPTIMIZATION SYSTEM (Phone, Tablet, Desktop, TV)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL TOUCH & ACCESSIBILITY BASELINE
+   -------------------------------------------------------------------------- */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Momentum smooth scrolling on mobile & touch devices */
+.main-view,
+.table-wrap,
+.side-nav,
+.modal-inner,
+.table-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Touch targets: ensure interactive elements meet 44px min touch size */
+button,
+a,
+input,
+select,
+textarea,
+.tab-btn,
+.nav-btn {
+  touch-action: manipulation;
+}
+
+/* --------------------------------------------------------------------------
+   2. MOBILE & PHONES (<= 768px, iPhones, Galaxy, Pixel, Foldables outer screen)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* Prevent iOS Safari automatic zoom-in when tapping form inputs (< 16px triggers zoom) */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Safe Area Insets for Notch, Dynamic Island, and Home Indicator */
+  .topbar {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    height: calc(60px + env(safe-area-inset-top, 0px));
+  }
+
+  .sidebar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    z-index: 999 !important;
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+    background: rgba(6, 8, 20, 0.92) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-top: 1px solid rgba(0, 240, 255, 0.2) !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .side-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    gap: 4px !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding: 4px 0 2px !important;
+    scrollbar-width: none !important;
+  }
+
+  .side-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .side-nav button {
+    flex: 1 1 0 !important;
+    min-width: 54px !important;
+    max-width: 80px !important;
+    min-height: 48px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+    border-radius: 10px !important;
+    gap: 3px !important;
+  }
+
+  /* Clear main view so bottom nav doesn't cover content */
+  .main-view {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: max(14px, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(14px, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  /* Full-width responsive cards & tables */
+  .card {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .table-wrap {
+    width: 100% !important;
+    overflow-x: auto !important;
+    position: relative;
+    border-radius: 10px;
+    margin-inline: -2px;
+  }
+
+  /* Form actions stack on mobile */
+  .dialog-actions,
+  .action-row {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .dialog-actions button,
+  .action-row button {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+
+  /* Login screen on mobile */
+  .login-card {
+    width: 100% !important;
+    padding: 24px 18px !important;
+  }
+}
+
+/* Small phone fine-tuning (<= 380px: iPhone SE, older Android) */
+@media (max-width: 380px) {
+  .side-nav button {
+    min-width: 48px !important;
+    font-size: 9px !important;
+    padding: 4px 2px !important;
+  }
+  .side-nav button .nav-icon {
+    font-size: 12px !important;
+  }
+  .page-header h1 {
+    font-size: 22px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. TABLETS & FOLDABLES (769px to 1180px, iPad, Galaxy Tab, Surface)
+   -------------------------------------------------------------------------- */
+@media (min-width: 769px) and (max-width: 1180px) {
+  .app-shell {
+    grid-template-columns: 210px minmax(0, 1fr) !important;
+  }
+
+  .sidebar {
+    padding: 16px 12px !important;
+  }
+
+  .side-nav button {
+    padding: 9px 10px !important;
+    font-size: 13px !important;
+    gap: 10px !important;
+  }
+
+  .main-view {
+    padding: 24px 20px 48px !important;
+  }
+
+  /* 2-column balanced grid for tablet screens */
+  .view-page {
+    grid-template-columns: repeat(12, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  .card.half,
+  .chart-grid-2 > *,
+  .live-grid > * {
+    grid-column: span 6 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. LANDSCAPE MOBILE & FOLDABLE TILT (@media max-height: 520px)
+   -------------------------------------------------------------------------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .topbar {
+    height: 48px !important;
+  }
+  .sidebar {
+    position: relative !important;
+    height: 100% !important;
+    padding: 8px !important;
+  }
+  .side-nav button {
+    min-height: 36px !important;
+    padding: 4px 8px !important;
+  }
+  .main-view {
+    padding: 12px 16px 24px !important;
+  }
+  .modal-dialog {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. TVS, 4K DISPLAYS & LARGE SCREENS (1920px+, 4K UHD, display-mode: tv)
+   -------------------------------------------------------------------------- */
+/* Large Desktop & QHD / 1440p */
+@media (min-width: 1440px) {
+  .main-view {
+    max-width: 1680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* TVs, 4K UHD (3840px), Smart Boards & 10-foot UI */
+@media (min-width: 1921px), (display-mode: tv) {
+  html {
+    /* Scale root font for 10-foot legibility from across a room */
+    font-size: 18px !important;
+  }
+
+  /* TV Overscan Safe Margins */
+  .app-shell {
+    padding-left: max(24px, 2.5vw);
+    padding-right: max(24px, 2.5vw);
+    padding-top: max(16px, 1.5vh);
+    padding-bottom: max(16px, 1.5vh);
+  }
+
+  .main-view {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding-inline: 40px !important;
+  }
+
+  .sidebar {
+    width: 280px !important;
+  }
+
+  .side-nav button {
+    padding: 14px 18px !important;
+    font-size: 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .card {
+    padding: 28px !important;
+    border-radius: 20px !important;
+  }
+
+  .table-wrap th,
+  .table-wrap td {
+    padding: 16px 18px !important;
+    font-size: 15px !important;
+  }
+
+  /* High-visibility spatial D-pad remote focus indicator */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 4px solid #00f0ff !important;
+    outline-offset: 4px !important;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.8), inset 0 0 15px rgba(0, 240, 255, 0.4) !important;
+    transform: scale(1.02);
+    transition: transform 0.15s ease, outline 0.15s ease, box-shadow 0.15s ease !important;
+  }
+}
+
+/* Ultra 4K / 8K Screens (>= 2560px) */
+@media (min-width: 2560px) {
+  html {
+    font-size: 21px !important;
+  }
+
+  .main-view {
+    max-width: 2200px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. PWA STANDALONE APP EXPERIENCE
+   -------------------------------------------------------------------------- */
+@media (display-mode: standalone) {
+  /* Prevent accidental text selections during app navigation */
+  .sidebar,
+  .topbar,
+  .tab-btn,
+  .brand {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Clean window-controls-overlay spacing for desktop PWAs (Windows/macOS/ChromeOS) */
+  @supports (padding-top: env(titlebar-area-height)) {
+    .topbar {
+      padding-top: env(titlebar-area-height, 0px);
+    }
+  }
+}
+
+/* Print Friendly Styles for Certificates & Reports */
+@media print {
+  .sidebar,
+  .topbar,
+  .theme-btn,
+  .action-row button,
+  .global-search-wrap {
+    display: none !important;
+  }
+  .app-shell {
+    display: block !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .main-view {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .card {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+}
+

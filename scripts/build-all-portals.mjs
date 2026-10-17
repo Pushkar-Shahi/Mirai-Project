@@ -46,6 +46,13 @@ async function main() {
   // always load the production runtime-config with the real API URL instead of any stale dev fallback.
   await cp(path.join(OUT_DIR, 'login', 'shared'), path.join(OUT_DIR, 'shared'), {recursive: true});
 
+  // Provide PWA manifest, service worker, and icons at root and within each portal
+  const PUBLIC_DIR = path.join(ROOT, 'frontend', 'public');
+  await cp(PUBLIC_DIR, OUT_DIR, {recursive: true});
+  for (const site of ['login', ...PORTALS]) {
+    await cp(PUBLIC_DIR, path.join(OUT_DIR, site), {recursive: true});
+  }
+
   // Normalize URLs so trailing slashes are consistently maintained
   const redirects = [
     '/login /login/ 301',
