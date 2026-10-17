@@ -16,7 +16,7 @@ import {buildPortal} from '../frontend/scripts/build-portal.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.resolve(process.env.OUTPUT_DIR || path.join(ROOT, 'dist-portals'));
 const API_URL = (process.env.MIRAI_API_BASE_URL && process.env.MIRAI_API_BASE_URL.trim())
-  || 'https://club-tracker-demo-api.onrender.com';
+  || 'https://club-tracker-demo-api-gdqp.onrender.com';
 const PORTALS = ['student', 'campus-manager', 'super-admin', 'advisor', 'coordinator'];
 
 async function main() {
