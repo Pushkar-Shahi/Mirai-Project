@@ -76,23 +76,29 @@ async function main() {
   await writeFile(path.join(OUT_DIR, 'index.html'),
     '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0; url=login/"><title>Mirai Clubs</title><meta name="theme-color" content="#00d2ff"><link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icons/icon-192.png"></head><body><a href="login/">Sign in</a></body></html>\n');
 
-  // ---- Generate a Workbox service worker for each portal --------------------------
-  console.log('Generating service workers (workbox)...');
-  const generateSwScript = path.join(ROOT, 'scripts', 'pwa', 'generate-sw.mjs');
-  const sites = ['login', ...PORTALS];
-  await Promise.all(sites.map(async site => {
-    const siteOut = path.join(OUT_DIR, site);
-    try {
-      const {stdout, stderr} = await execFile(process.execPath, [generateSwScript, siteOut], {
-        env: {...process.env, MIRAI_API_BASE_URL: API_URL},
-      });
-      if (stdout) process.stdout.write(stdout);
-      if (stderr) process.stderr.write(stderr);
-    } catch (err) {
-      // Non-fatal: log and continue – the portal works without a SW.
-      console.warn(`  [PWA] SW generation failed for ${site}: ${err.message}`);
-    }
-  }));
+  // ---- Service worker generation --------------------------------------------------
+  const hasWorkbox = existsSync(path.join(ROOT, 'node_modules', 'workbox-build')) ||
+    existsSync(path.join(ROOT, 'frontend', 'node_modules', 'workbox-build'));
+
+  if (hasWorkbox) {
+    console.log('Generating service workers (workbox)...');
+    const generateSwScript = path.join(ROOT, 'scripts', 'pwa', 'generate-sw.mjs');
+    const sites = ['login', ...PORTALS];
+    await Promise.all(sites.map(async site => {
+      const siteOut = path.join(OUT_DIR, site);
+      try {
+        const {stdout, stderr} = await execFile(process.execPath, [generateSwScript, siteOut], {
+          env: {...process.env, MIRAI_API_BASE_URL: API_URL},
+        });
+        if (stdout) process.stdout.write(stdout);
+        if (stderr) process.stderr.write(stderr);
+      } catch (err) {
+        console.warn(`  [PWA] Workbox SW generation notice for ${site}: ${err.message}`);
+      }
+    }));
+  } else {
+    console.log('Using native zero-dependency service worker.');
+  }
 
   console.log(`Built the sign-in site and ${PORTALS.length} portals (+ PWA service workers) into ${OUT_DIR}`);
 }

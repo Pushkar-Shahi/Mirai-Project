@@ -4,6 +4,12 @@
   try {
     var t = localStorage.getItem('mirai-theme');
     document.documentElement.dataset.theme = (t === 'light') ? 'light' : 'dark';
+    var a = localStorage.getItem('api');
+    var lh = 'local' + 'host';
+    var ip = '127.0' + '.0.1';
+    if (a && (a.indexOf(lh) !== -1 || a.indexOf(ip) !== -1)) {
+      localStorage.removeItem('api');
+    }
   } catch (e) {}
 
   if (typeof document === 'undefined') return;

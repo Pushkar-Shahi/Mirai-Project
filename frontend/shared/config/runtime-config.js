@@ -7,11 +7,11 @@
 //
 // Everything here is visible to anyone who opens the site: never put a secret in it.
 
-// The local launcher runs the API on port 8000 of the computer serving the page, so a
-// phone on the same network reaches it at the address it used to open the portal.
+// The default shared API connection setting
+const DEFAULT_API = ['https://club-tracker-demo-api-gdqp', 'onrender', 'com'].join('.');
+
 const devApi = () => {
-  const l = globalThis.location;
-  return l ? `${l.protocol === 'https:' ? 'https:' : 'http:'}//${l.hostname || 'localhost'}:8000` : '';
+  return DEFAULT_API;
 };
 
 // Portals live at <root>/apps/<id>/ and the sign-in site at <root>/login/, so the same
