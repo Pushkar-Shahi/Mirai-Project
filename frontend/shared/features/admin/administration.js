@@ -20,6 +20,7 @@ export const createAdministrationPage=({extraCards=[]}={})=>async b=>{
   const fields=[
     ['name','Full name','text',null,{maxlength:160}],
     ['email','Email','email'],
+    ['?phone_e164','Phone number (WhatsApp, international e.g. +14155552671)','tel',null,{pattern:'\\+[1-9][0-9]{7,14}',maxlength:16,hint:'Format: +<country_code><number>, e.g. +14155552671'}],
     ['password','Temporary password (10+ characters)','password',null,{minlength:10,maxlength:128,autocomplete:'new-password'}],
     ['role','Role','select',roles.map(r=>[r,roleLabel(r)])],
     ['?student_code','Student ID (required for students)','text',null,{pattern:STUDENT_CODE_RE,maxlength:40,hint:STUDENT_CODE_HINT}]
@@ -28,6 +29,10 @@ export const createAdministrationPage=({extraCards=[]}={})=>async b=>{
 
   const createForm=frm(fields,'Create account',async d=>{
     clean(d);
+    if(d.phone_e164){
+      d.phone_e164=d.phone_e164.trim();
+      if(!/^\+[1-9][0-9]{7,14}$/.test(d.phone_e164))throw new Error('Phone number must be in E.164 format, e.g. +14155552671');
+    }
     if(d.role==='student'&&!d.student_code)throw new Error('Students need a student ID');
     if(d.role!=='student'&&!d.student_code)delete d.student_code;
     if(d.campus_id)d.campus_id=+d.campus_id;

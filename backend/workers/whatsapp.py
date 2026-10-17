@@ -22,6 +22,9 @@ SEND_CONCURRENCY = 5
 
 
 def whatsapp_config():
+    mode = os.getenv("WHATSAPP_MODE", "").strip().lower()
+    if mode == "mock":
+        return {"mode": "mock", "url": "mock://whatsapp"}
     bridge_url = os.getenv("WHATSAPP_BRIDGE_URL", "").strip().rstrip("/")
     if bridge_url:
         return {
@@ -160,6 +163,8 @@ async def _record_failure(conn, row: dict, code: str):
 
 
 async def _send_one(client: httpx.AsyncClient, config: dict, row: dict):
+    if config.get("mode") == "mock":
+        return f"mock-{row['id']}", None
     title, detail = template_parameters(row["kind"], row["payload"] or {})
     if config.get("mode") == "bridge":
         try:

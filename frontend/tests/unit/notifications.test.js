@@ -54,11 +54,11 @@ describe.each([
     expect(find(view, 'button', 'Mark all read')).toBeUndefined();
   });
 
-  test('the email and WhatsApp preference sections render', async () => {
+  test('the email preference section renders (WhatsApp is automated)', async () => {
     const { view } = await mountTab(portal, 'Notifications', role);
     await settle();
     expect(view.textContent).toContain('Email me reminders');
-    expect(view.textContent).toContain('WhatsApp');
+    expect(view.textContent).not.toContain('Save WhatsApp settings');
   });
 });
 

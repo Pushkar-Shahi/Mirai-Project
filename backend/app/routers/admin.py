@@ -1,3 +1,4 @@
+import re
 from typing import Literal
 
 import asyncpg
@@ -24,11 +25,22 @@ class UserIn(BaseModel):
     role: str
     campus_id: int | None = None
     student_code: str | None = Field(default=None, max_length=80)
+    phone_e164: str | None = Field(default=None, max_length=16)
 
     @field_validator("student_code")
     @classmethod
     def valid_student_code(cls, v):
         return clean_student_code(v)
+
+    @field_validator("phone_e164")
+    @classmethod
+    def valid_phone(cls, v):
+        if not v:
+            return None
+        v = v.strip()
+        if not re.fullmatch(r"\+[1-9][0-9]{7,14}", v):
+            raise ValueError("Phone number must be in E.164 format, e.g. +14155552671")
+        return v
 
 
 @router.get("/campuses")
@@ -77,7 +89,7 @@ async def list_users(
         where.append(f"u.campus_id=${len(params)}")
     rows = await conn.fetch(
         f"""SELECT u.id, u.campus_id, ca.name AS campus_name, u.role, u.student_code,
-                   u.email, u.name, u.created_at
+                   u.email, u.name, u.phone_e164, u.created_at
             FROM users u LEFT JOIN campus ca ON ca.id=u.campus_id
             WHERE {' AND '.join(where)}
             ORDER BY u.campus_id NULLS FIRST, u.role, u.name LIMIT 2000""",
@@ -117,14 +129,22 @@ async def create_user(
     if body.role == "student" and not student_code:
         raise HTTPException(422, "student_code is required for students")
 
+    phone = body.phone_e164
     try:
         row = await conn.fetchrow(
-            """INSERT INTO users (campus_id, role, student_code, email, name, pw_hash)
-               VALUES ($1,$2,$3,$4,$5,$6)
-               RETURNING id, campus_id, role, student_code, email, name, created_at""",
+            """INSERT INTO users (campus_id, role, student_code, email, name, pw_hash, phone_e164)
+               VALUES ($1,$2,$3,$4,$5,$6,$7)
+               RETURNING id, campus_id, role, student_code, email, name, phone_e164, created_at""",
             campus_id, body.role, student_code, body.email.strip().lower(),
-            name, hash_password(body.password),
+            name, hash_password(body.password), phone,
         )
+        if phone:
+            await conn.execute(
+                """INSERT INTO whatsapp_preferences (user_id, phone_e164, opted_in, opted_in_at)
+                   VALUES ($1, $2, true, now())
+                   ON CONFLICT (user_id) DO UPDATE SET phone_e164=EXCLUDED.phone_e164, opted_in=true, opted_in_at=now()""",
+                row["id"], phone,
+            )
     except asyncpg.UniqueViolationError as exc:
         raise HTTPException(409, "Email or student code is already in use") from exc
     return dict(row)

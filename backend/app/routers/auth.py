@@ -13,9 +13,17 @@ class LoginIn(BaseModel):
     password: str
 
 
+import re
+from pydantic import Field
+
+
+class ProfileUpdateIn(BaseModel):
+    phone_e164: str | None = Field(default=None, max_length=16)
+
+
 async def _profile(conn, user_id: int) -> dict | None:
     row = await conn.fetchrow(
-        """SELECT u.id, u.role, u.campus_id, u.name, u.email, u.student_code,
+        """SELECT u.id, u.role, u.campus_id, u.name, u.email, u.student_code, u.phone_e164,
                   ca.name AS campus_name
            FROM users u LEFT JOIN campus ca ON ca.id = u.campus_id WHERE u.id=$1""",
         user_id,
@@ -56,3 +64,26 @@ async def me(user: dict = Depends(current_user), conn=Depends(get_conn)):
         # rather than act with stale privileges.
         raise HTTPException(401, "Your access changed; sign in again")
     return profile
+
+
+@router.put("/profile")
+async def update_profile(body: ProfileUpdateIn, user: dict = Depends(current_user), conn=Depends(get_conn)):
+    phone = (body.phone_e164 or "").strip() or None
+    if phone and not re.fullmatch(r"\+[1-9][0-9]{7,14}", phone):
+        raise HTTPException(422, "Phone number must be in E.164 format, e.g. +14155552671")
+    async with conn.transaction():
+        await conn.execute("UPDATE users SET phone_e164=$2 WHERE id=$1", user["id"], phone)
+        if phone:
+            await conn.execute(
+                """INSERT INTO whatsapp_preferences (user_id, phone_e164, opted_in, opted_in_at)
+                   VALUES ($1, $2, true, now())
+                   ON CONFLICT (user_id) DO UPDATE SET phone_e164=EXCLUDED.phone_e164, opted_in=true, opted_in_at=now()""",
+                user["id"], phone,
+            )
+        else:
+            await conn.execute(
+                "UPDATE whatsapp_preferences SET opted_in=false, opted_out_at=now() WHERE user_id=$1",
+                user["id"],
+            )
+    return await _profile(conn, user["id"])
+

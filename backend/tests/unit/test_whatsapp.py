@@ -44,3 +44,11 @@ def test_whatsapp_configuration_builds_bridge_url(monkeypatch):
     assert config["url"] == "http://127.0.0.1:3001/send"
     assert config["status_url"] == "http://127.0.0.1:3001/status"
 
+
+def test_whatsapp_configuration_builds_mock_url(monkeypatch):
+    monkeypatch.setenv("WHATSAPP_MODE", "mock")
+    config = whatsapp_config()
+    assert config["mode"] == "mock"
+    assert config["url"] == "mock://whatsapp"
+
+
