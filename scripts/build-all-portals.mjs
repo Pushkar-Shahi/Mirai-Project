@@ -8,10 +8,15 @@
 //
 // MIRAI_API_BASE_URL is required. There is deliberately no default: a silent fallback to a
 // demo API once made every deployed tab talk to the wrong, out-of-date server.
+import {existsSync} from 'node:fs';
 import {mkdir, writeFile, cp} from 'node:fs/promises';
+import {execFile as _execFile} from 'node:child_process';
+import {promisify} from 'node:util';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildPortal} from '../frontend/scripts/build-portal.mjs';
+
+const execFile = promisify(_execFile);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.resolve(process.env.OUTPUT_DIR || path.join(ROOT, 'dist-portals'));
@@ -52,10 +57,39 @@ async function main() {
   ].join('\n') + '\n';
   await writeFile(path.join(OUT_DIR, '_redirects'), redirects);
 
+  const iconsSrc = path.join(ROOT, 'frontend', 'public', 'icons');
+  const manifestSrc = path.join(ROOT, 'frontend', 'public', 'manifest.json');
+  if (existsSync(iconsSrc)) {
+    await cp(iconsSrc, path.join(OUT_DIR, 'icons'), {recursive: true});
+  }
+  if (existsSync(manifestSrc)) {
+    await cp(manifestSrc, path.join(OUT_DIR, 'manifest.json'));
+  }
+
   await writeFile(path.join(OUT_DIR, 'index.html'),
-    '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=login/"><title>Mirai</title><a href="login/">Sign in</a>\n');
-  console.log(`Built the sign-in site and ${PORTALS.length} portals into ${OUT_DIR}`);
+    '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0; url=login/"><title>Mirai Clubs</title><meta name="theme-color" content="#00d2ff"><link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icons/icon-192.png"></head><body><a href="login/">Sign in</a></body></html>\n');
+
+  // ---- Generate a Workbox service worker for each portal --------------------------
+  console.log('Generating service workers (workbox)...');
+  const generateSwScript = path.join(ROOT, 'scripts', 'pwa', 'generate-sw.mjs');
+  const sites = ['login', ...PORTALS];
+  await Promise.all(sites.map(async site => {
+    const siteOut = path.join(OUT_DIR, site);
+    try {
+      const {stdout, stderr} = await execFile(process.execPath, [generateSwScript, siteOut], {
+        env: {...process.env, MIRAI_API_BASE_URL: API_URL},
+      });
+      if (stdout) process.stdout.write(stdout);
+      if (stderr) process.stderr.write(stderr);
+    } catch (err) {
+      // Non-fatal: log and continue – the portal works without a SW.
+      console.warn(`  [PWA] SW generation failed for ${site}: ${err.message}`);
+    }
+  }));
+
+  console.log(`Built the sign-in site and ${PORTALS.length} portals (+ PWA service workers) into ${OUT_DIR}`);
 }
+
 
 main().catch(err => {
   console.error(`build-all-portals: ${err.message}`);

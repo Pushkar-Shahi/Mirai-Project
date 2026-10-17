@@ -7,9 +7,12 @@ import {roleMismatchView} from '../auth/role-mismatch-view.js';
 import {storedToken,storeToken,signIn,fetchSessionUser,roleMatches,clearSession,takeHandoff,goToRolePortal,goToLogin,safeNext,REASON_MESSAGES} from '../auth/session.js';
 import {shell,stopBadgeTimer} from './shell.js';
 
+import {registerServiceWorker} from '../pwa/register.js';
+
 // Starts one role portal: `portal` is its portal-config.js, `pages` maps each page id in
 // portal.pages to the function that renders it.
 export function startPortal(portal,pages){
+ registerServiceWorker();
  const missing=portal.pages.filter(t=>typeof pages[t]!=='function');
  if(missing.length)throw new Error(`${portal.portalId}: no page for ${missing.join(', ')}`);
  configureRouter(portal,pages);watchHash();

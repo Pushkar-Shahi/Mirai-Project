@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1126"/>
+      <stop offset="100%" stop-color="#060814"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Outer glow ring -->
+  <rect width="512" height="512" rx="112" fill="none" stroke="rgba(0,210,255,0.18)" stroke-width="4"/>
+  <!-- M lettermark, bold, centred -->
+  <text x="256" y="354" font-family="system-ui,Arial,sans-serif" font-weight="900"
+        font-size="256" text-anchor="middle" fill="url(#mark)" letter-spacing="-10">M</text>
+  <!-- Subtle underline accent -->
+  <rect x="138" y="374" width="236" height="10" rx="5" fill="url(#mark)" opacity="0.55"/>
+</svg>
