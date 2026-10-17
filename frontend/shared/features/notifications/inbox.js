@@ -1,7 +1,7 @@
 import {h,toast,go} from '../../core/dom.js';
 import {api} from '../../core/api.js';
 import {me,CFG,roleLabel} from '../../core/state.js';
-import {fmt,STATUS} from '../../core/format.js';
+import {fmt,STATUS,formatPersonLabel} from '../../core/format.js';
 import {pill,card,heading,btn,tbl} from '../../components/ui.js';
 import {kindLabel,noticeText} from './notice-text.js';
 import {updateBadge} from './badge.js';
@@ -54,7 +54,7 @@ export const notificationsPage=async b=>{
   const table=tbl(r.items||[],[
    ['Notice',n=>[h('strong',{},kindLabel(n.kind)),h('small',{class:'field-hint'},noticeText(n))]],
    ['Sent',n=>h('span',{class:'nowrap'},fmt.dt(n.send_at))],
-   ['Recipient',n=>[h('strong',{},n.recipient_name||'—'),h('small',{class:'field-hint'},`${roleLabel(n.recipient_role)}${n.recipient_campus?' · '+n.recipient_campus:''}`)]],
+   ['Recipient',n=>[h('strong',{},formatPersonLabel({name:n.recipient_name,campus:n.recipient_campus},{campus:me?.campus_name})||'—'),h('small',{class:'field-hint'},roleLabel(n.recipient_role))]],
    ['Delivery state',n=>h('div',{class:'pill-row'},
     n.cancelled_at?pill('cancelled','In-app: outdated'):pill(n.sent_at?'sent':'pending',`In-app: ${n.sent_at?(n.read_at?'read':'delivered'):'queued'}`),
     ...(n.deliveries||[]).map(d=>pill(d.status,`${d.channel==='email'?'Email':'WhatsApp'}: ${STATUS[d.status]?.[0]||d.status}`))

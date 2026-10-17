@@ -38,10 +38,11 @@ async def _club_in_scope(conn, user: dict, club_id: int):
 async def _club_rows(conn, user: dict) -> list[dict]:
     frag, val = club_scope(user)
     rows = await conn.fetch(
-        f"""SELECT v.club_id, v.club_name, v.members, v.capacity, v.club_days, v.last_club_day,
+        f"""SELECT v.club_id, v.club_name, ca.name AS campus_name, v.members, v.capacity, v.club_days, v.last_club_day,
                    v.attendance_records, v.submissions, v.avg_score, v.certificates,
                    v.approval_status, v.is_active
             FROM v_club_stats v JOIN clubs c ON c.id = v.club_id
+            LEFT JOIN campus ca ON ca.id = c.campus_id
             WHERE {frag} ORDER BY v.club_name""",
         val,
     )
@@ -60,8 +61,9 @@ async def _student_rows(conn, user: dict, *, only_zero=False, club_id=None, limi
             f"WHERE m.club_id = ${len(params)}::int AND m.status = 'approved')"
         )
     sql = (
-        "SELECT v.student_id, v.name, v.student_code, v.attendance_records, v.submissions, "
-        "v.event_registrations, v.certificates FROM v_student_stats v WHERE "
+        "SELECT v.student_id, v.name, v.student_code, ca.name AS campus_name, v.attendance_records, v.submissions, "
+        "v.event_registrations, v.certificates FROM v_student_stats v "
+        "JOIN users u ON u.id = v.student_id LEFT JOIN campus ca ON ca.id = u.campus_id WHERE "
         + " AND ".join(where) + " ORDER BY v.name, v.student_id"
     )
     if limit is not None:
@@ -84,7 +86,7 @@ async def _monthly(conn, user: dict, month: str) -> dict:
     in_month = "d.status <> 'planned' AND d.day_date >= $2::date AND d.day_date < $3::date"
 
     per_club = await conn.fetch(
-        f"""SELECT c.id AS club_id, c.name AS club_name,
+        f"""SELECT c.id AS club_id, c.name AS club_name, ca.name AS campus_name,
               (SELECT count(*) FROM club_days d
                  WHERE d.club_id = c.id AND {in_month}) AS club_days,
               (SELECT count(*) FROM attendance a
@@ -127,7 +129,8 @@ async def _monthly(conn, user: dict, month: str) -> dict:
                  JOIN club_days d ON d.id = ce.ref_id
                  WHERE ce.ref_type = 'club_day' AND ce.revoked_at IS NULL
                    AND d.club_id = c.id AND {in_month}) AS certificates
-            FROM clubs c WHERE {frag} ORDER BY c.name""",
+            FROM clubs c LEFT JOIN campus ca ON ca.id=c.campus_id
+            WHERE {frag} ORDER BY c.name""",
         val, start, end,
     )
 

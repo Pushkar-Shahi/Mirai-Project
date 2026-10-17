@@ -318,7 +318,9 @@ async def grading_roster(
     not_submitted | pending (awaiting grading) | graded | resubmission_requested.
     A submission made after a resubmission request puts the student back to pending."""
     day = await conn.fetchrow(
-        """SELECT d.*, c.name AS club_name FROM club_days d JOIN clubs c ON c.id=d.club_id
+        """SELECT d.*, c.name AS club_name, ca.name AS campus_name
+           FROM club_days d JOIN clubs c ON c.id=d.club_id
+           LEFT JOIN campus ca ON ca.id=c.campus_id
            WHERE d.id=$1""", club_day_id)
     if day is None:
         raise HTTPException(404, "Club day not found")
@@ -326,12 +328,15 @@ async def grading_roster(
     rubric_rows = await conn.fetch("SELECT key, max_score FROM rubric_criteria ORDER BY id")
     max_total = sum(r["max_score"] for r in rubric_rows)
     members = await conn.fetch(
-        """SELECT u.id AS student_id, u.name AS student_name, u.student_code
+        """SELECT u.id AS student_id, u.name AS student_name, u.student_code, ca.name AS campus_name
            FROM club_memberships m JOIN users u ON u.id=m.student_id
+           LEFT JOIN campus ca ON ca.id=u.campus_id
            WHERE m.club_id=$1 AND m.status='approved'
            UNION
-           SELECT DISTINCT u.id, u.name, u.student_code FROM submissions s
-           JOIN users u ON u.id=s.student_id WHERE s.club_day_id=$2
+           SELECT DISTINCT u.id, u.name, u.student_code, ca.name AS campus_name FROM submissions s
+           JOIN users u ON u.id=s.student_id
+           LEFT JOIN campus ca ON ca.id=u.campus_id
+           WHERE s.club_day_id=$2
            ORDER BY 2""",
         day["club_id"], club_day_id,
     )
@@ -369,6 +374,7 @@ async def grading_roster(
         out.append({**dict(m), "status": state, "submissions": items, "latest": latest})
     return {
         "club_day": {"id": day["id"], "club_id": day["club_id"], "club_name": day["club_name"],
+                     "campus_name": day["campus_name"],
                      "title": day["title"], "day_date": day["day_date"], "status": day["status"],
                      "submission_deadline": day["submission_deadline"],
                      "scoring_open": day["status"] in OPEN_FOR_SCORING},

@@ -1,7 +1,7 @@
 import {h,toast} from '../../core/dom.js';
 import {api} from '../../core/api.js';
 import {me,can,roleLabel} from '../../core/state.js';
-import {fmt,STATUS} from '../../core/format.js';
+import {fmt,STATUS,formatClubLabel,formatPersonLabel} from '../../core/format.js';
 import {pill,card,heading,empty,btn,tbl,statGrid,clean,picker} from '../../components/ui.js';
 import {frm} from '../../components/forms.js';
 import {modal,ask} from '../../components/dialogs.js';
@@ -109,11 +109,11 @@ export const clubRegistryPage=async b=>{
  b.append(card(
   heading(`${cl.length} club${cl.length===1?'':'s'}`,'All clubs'),
   tbl(cl,[
-   ['Club',c=>[h('strong',{},c.name),h('small',{class:'field-hint'},[c.campus_name,c.advisor_name&&'Advisor: '+c.advisor_name].filter(Boolean).join(' · '))]],
+   ['Club',c=>[h('strong',{},formatClubLabel(c,{campus:me?.campus_name})),h('small',{class:'field-hint'},[c.advisor_name&&'Advisor: '+c.advisor_name].filter(Boolean).join(' · '))]],
    ['Status',c=>h('div',{class:'pill-row'},pill(c.approval_status),pill(c.is_active?'active':'inactive'))],
    ['Decision',decision],
    ['Members',c=>`${c.approved_count}/${c.capacity}${c.pending_count?` · ${c.pending_count} pending`:''}`],
-   ['Coordinators',c=>c.coordinators?.length?h('div',{class:'pill-row'},...c.coordinators.map(x=>h('button',{type:'button',class:'s ghost',title:'View profile',onclick:()=>showUserProfile(x.id)},x.name))):'—'],
+   ['Coordinators',c=>c.coordinators?.length?h('div',{class:'pill-row'},...c.coordinators.map(x=>h('button',{type:'button',class:'s ghost',title:'View profile',onclick:()=>showUserProfile(x.id)},formatPersonLabel(x,{campus:me?.campus_name})))):'—'],
    ['Actions',c=>h('div',{class:'pill-row'},actions(c))]
   ],'No clubs yet')
  ));
@@ -121,8 +121,8 @@ export const clubRegistryPage=async b=>{
  // ID-driven coordinator assignment with preview, validation, and direct profile link (B4)
  if(can('club.coordinators')&&cl.length){
   const coordForm=h('div',{class:'add-coord-form'});
-  const clubSelect=picker(cl.map(c=>[c.id,`${c.name}${c.campus_name?' · '+c.campus_name:''}`]),{'aria-label':'Select club'});
-  const identInput=h('input',{type:'text',placeholder:'Enter coordinator account ID or email, e.g. 4 or coord@demo.edu','aria-label':'Coordinator identifier'});
+  const clubSelect=picker(cl.map(c=>[c.id,formatClubLabel(c,{campus:me?.campus_name})]),{'aria-label':'Select club'});
+  const identInput=h('input',{type:'text',placeholder:'Enter coordinator account ID or email, e.g. 4 or coord@example.edu','aria-label':'Coordinator identifier'});
   const previewBox=h('div',{class:'coord-preview',style:'margin:12px 0;min-height:24px;'});
   let selectedCoord=null;
 

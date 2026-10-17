@@ -1,7 +1,7 @@
 import {h,toast,go} from '../../core/dom.js';
 import {api} from '../../core/api.js';
-import {can} from '../../core/state.js';
-import {fmt,STATUS} from '../../core/format.js';
+import {can,me} from '../../core/state.js';
+import {fmt,STATUS,formatClubLabel,formatPersonLabel} from '../../core/format.js';
 import {pill,card,heading,empty,btn,tbl,statGrid,picker} from '../../components/ui.js';
 import {modal} from '../../components/dialogs.js';
 import {hashParams,setParams} from '../../navigation/router.js';
@@ -10,13 +10,13 @@ import {subItem,previewSubmission,subActions} from './submission-items.js';
 // ---------- Review & evaluate submissions (staff) ----------
 export const gradingPage=async b=>{const ds=(await api('GET','/club-days')).filter(d=>['open','submissions','evaluating','closed'].includes(d.status));
  if(!ds.length)return b.append(card(empty('Nothing to grade yet','Club Days appear here once they are open.')));
- const pick=picker(ds.map(d=>[d.id,`${d.club_name} · ${d.title||d.plan_topic||'Club Day'} · ${fmt.date(d.day_date)} · ${STATUS[d.status]?.[0]}`]),{'aria-label':'Club Day'}),filter=picker([['all','All students'],['pending','Awaiting grading'],['not_submitted','Not submitted'],['resubmission_requested','Resubmission requested'],['graded','Graded']],{'aria-label':'Filter'}),summary=h('div'),list=h('div');
+ const pick=picker(ds.map(d=>[d.id,`${formatClubLabel(d,{campus:me?.campus_name})} · ${d.title||d.plan_topic||'Club Day'} · ${fmt.date(d.day_date)} · ${STATUS[d.status]?.[0]}`]),{'aria-label':'Club Day'}),filter=picker([['all','All students'],['pending','Awaiting grading'],['not_submitted','Not submitted'],['resubmission_requested','Resubmission requested'],['graded','Graded']],{'aria-label':'Filter'}),summary=h('div'),list=h('div');
  const want=hashParams().get('day');if(want&&ds.some(d=>String(d.id)===want))pick.value=want;let data;
  const draw=()=>{const rows=data.students.filter(x=>filter.value==='all'||x.status===filter.value);const grader=can('submission.grade')&&data.club_day.scoring_open;
-  list.replaceChildren(tbl(rows,[['Student',x=>[h('strong',{},x.student_name),h('small',{class:'field-hint'},x.student_code)]],['Status',x=>pill(x.status)],['What they submitted',x=>x.latest?[subItem(x.latest),h('small',{class:'field-hint'},`${fmt.dt(x.latest.submitted_at)}${x.latest.is_late?' · late':''}${x.submissions.length>1?` · ${x.submissions.length} versions`:''}`)]:h('span',{class:'mut'},'—')],['Score',x=>x.latest?.evaluation?`${x.latest.evaluation.total}/${x.latest.evaluation.max_total}`:'—'],['Feedback',x=>x.latest?.evaluation?.comment||'—'],
+  list.replaceChildren(tbl(rows,[['Student',x=>[h('strong',{},formatPersonLabel(x,{campus:me?.campus_name})),h('small',{class:'field-hint'},x.student_code)]],['Status',x=>pill(x.status)],['What they submitted',x=>x.latest?[subItem(x.latest),h('small',{class:'field-hint'},`${fmt.dt(x.latest.submitted_at)}${x.latest.is_late?' · late':''}${x.submissions.length>1?` · ${x.submissions.length} versions`:''}`)]:h('span',{class:'mut'},'—')],['Score',x=>x.latest?.evaluation?`${x.latest.evaluation.total}/${x.latest.evaluation.max_total}`:'—'],['Feedback',x=>x.latest?.evaluation?.comment||'—'],
    ['',x=>x.latest&&h('div',{class:'pill-row'},x.latest.kind!=='link'&&btn('View',()=>previewSubmission(x.latest),'s'),grader&&btn(x.latest.evaluation?'Update evaluation':'Evaluate',()=>evaluateDialog(x,data,load)))]],'No students match this filter'))};
  const load=async()=>{setParams({day:pick.value});data=await api('GET',`/club-days/${pick.value}/grading-roster`);const c=data.counts,cd=data.club_day;
-  summary.replaceChildren(h('p',{class:'mut'},`${cd.club_name} · ${cd.title||'Club Day'} · ${fmt.date(cd.day_date)}${cd.submission_deadline?' · due '+fmt.dt(cd.submission_deadline):''} · `,pill(cd.status),' ',cd.scoring_open?pill('open','Scoring open'):pill('neutral',cd.status==='closed'?'Results published':'Scoring opens at “submissions”')),
+  summary.replaceChildren(h('p',{class:'mut'},`${formatClubLabel(cd,{campus:me?.campus_name})} · ${cd.title||'Club Day'} · ${fmt.date(cd.day_date)}${cd.submission_deadline?' · due '+fmt.dt(cd.submission_deadline):''} · `,pill(cd.status),' ',cd.scoring_open?pill('open','Scoring open'):pill('neutral',cd.status==='closed'?'Results published':'Scoring opens at “submissions”')),
    statGrid([['Awaiting grading',fmt.n(c.pending)],['Graded',fmt.n(c.graded)],['Resubmission requested',fmt.n(c.resubmission_requested)],['Not submitted',fmt.n(c.not_submitted)]]));draw()};
  pick.onchange=()=>go(load);filter.onchange=draw;
  b.append(card(heading('Submissions only. Attendance lives on the Check-in page','Choose a Club Day'),h('div',{class:'filters'},h('label',{},'Club Day',pick),h('label',{},'Show',filter)),summary),card(heading('One row per member','Student work'),list));await load()};

@@ -12,3 +12,22 @@ export const dayWhen=d=>`${fmt.date(d.day_date)}${d.start_time?` · ${fmt.time(d
 export const STATUS={pending:['Pending','wait'],approved:['Approved','good'],rejected:['Rejected','alert'],planned:['Planned','neutral'],announced:['Announced','info'],open:['Open','wait'],submissions:['Submissions open','wait'],evaluating:['Evaluating','wait'],closed:['Closed','good'],
  draft:['Draft','neutral'],submitted:['Submitted','wait'],live:['Live','good'],scheduled:['Scheduled','neutral'],checked_in:['Checked in','good'],not_checked_in:['Not yet checked in','neutral'],not_submitted:['Not submitted','neutral'],graded:['Graded','good'],resubmission_requested:['Resubmission requested','alert'],
  ready:['Ready','good'],failed:['Failed','alert'],generating:['Generating','wait'],sent:['Sent','good'],sending:['Sending','wait'],cancelled:['Cancelled','neutral'],registered:['Registered','info'],active:['Active','good'],inactive:['Deactivated','alert'],read:['Read','neutral'],unread:['Unread','info'],outdated:['Outdated','neutral'],rescheduled:['Rescheduled','info']};
+
+export const formatClubLabel=(club,context={})=>{
+ if(!club)return'';
+ const name=typeof club==='string'?club:(club.club_name||club.name||'');
+ const campus=typeof club==='string'?'':(club.campus_name||club.campus||club.host_campus||'');
+ if((context.byCampus||(context.campus&&context.campus===campus))&&name)return name;
+ if(name&&campus)return `${name} - ${campus}`;
+ return name;
+};
+
+export const formatPersonLabel=(person,context={})=>{
+ if(!person)return'';
+ const name=typeof person==='string'?person:(person.student_name||person.recipient_name||person.user_name||person.name||'');
+ const campus=typeof person==='string'?'':(person.campus_name||person.student_campus||person.recipient_campus||person.campus||'');
+ if((context.byCampus||(context.campus&&context.campus===campus))&&name)return name;
+ if(name&&campus)return `${name} - ${campus}`;
+ return name;
+};
+

@@ -1,7 +1,7 @@
 import {h,toast} from '../../core/dom.js';
 import {api,dl} from '../../core/api.js';
 import {me,can} from '../../core/state.js';
-import {fmt} from '../../core/format.js';
+import {fmt,formatPersonLabel} from '../../core/format.js';
 import {pill,card,heading,btn,tbl,clean} from '../../components/ui.js';
 import {frm} from '../../components/forms.js';
 import {modal,ask} from '../../components/dialogs.js';
@@ -20,12 +20,12 @@ export const staffEventExtensions={
  async afterResults({id,box,show}){if(!adm())return;
   const rg=await api('GET',`/events/${id}/registrations`),certs=await api('GET',`/events/${id}/certificates`),sh=await api('GET',`/events/${id}/schedule-history`);
    if(sh.length)box.push(h('h3',{},'Schedule history'),h('ul',{class:'timeline'},sh.map(x=>h('li',{},`v${x.version}: ${fmt.dt(x.previous.starts_at)} → ${fmt.dt(x.current.starts_at)} · ${x.changed_by_name||''} · “${x.reason}”`))));
-   box.push(h('h3',{},'Registrations and check-in'),tbl(rg,[['Student',r=>`${r.student_name} (${r.student_code})`],['Team',r=>r.team_name||'—'],['Checked in',r=>r.checked_in_at?fmt.clock(r.checked_in_at):btn('Check in',async()=>{await api('POST',`/events/${id}/checkin`,{student_id:r.student_id});show(id)})]],'No registrations yet'),
+   box.push(h('h3',{},'Registrations and check-in'),tbl(rg,[['Student',r=>`${formatPersonLabel({name:r.student_name,campus:r.student_campus||r.campus_name||r.campus},{campus:me?.campus_name})} (${r.student_code})`],['Team',r=>r.team_name||'—'],['Checked in',r=>r.checked_in_at?fmt.clock(r.checked_in_at):btn('Check in',async()=>{await api('POST',`/events/${id}/checkin`,{student_id:r.student_id});show(id)})]],'No registrations yet'),
     h('h3',{},'Publish results (replaces any existing)'),
     frm([['lines','One per line: team ID,rank   e.g.  3,1','area']],'Publish results',async d=>{const results=d.lines.split('\n').map(s=>s.trim()).filter(Boolean).map((s,i)=>{const[p,q]=s.split(',').map(x=>x.trim());if(!/^\d+$/.test(p||'')||!/^\d+$/.test(q||''))throw new Error(`Line ${i+1}: use “team ID,rank” with numbers`);return{team_id:+p,rank:+q}});await api('PUT',`/events/${id}/results`,{results});toast('Results saved');show(id)},0),
     h('h3',{},'Event certificates'),btn('Issue participation to checked-in students',async()=>{const r=await api('POST',`/events/${id}/certificates/participation`);toast(`${r.issued} certificates issued`);show(id)},'s'),
     frm([['student_id','Student account ID','number',null,{min:1}],['achievement','Achievement label']],'Issue achievement',async d=>{await api('POST',`/events/${id}/certificates/achievement`,{student_id:+d.student_id,achievement:d.achievement});toast('Achievement certificate queued');show(id)}),
-    tbl(certs,[['Student','student_name'],['Type','kind'],['Status',c=>pill(c.status)],['',c=>c.status==='ready'&&btn('Download PDF',()=>dl(`/certificates/${c.id}/download`,'event-certificate.pdf'),'s')]],'No certificates yet'))},
+    tbl(certs,[['Student',c=>formatPersonLabel({name:c.student_name,campus:c.campus_name||c.campus},{campus:me?.campus_name})],['Type','kind'],['Status',c=>pill(c.status)],['',c=>c.status==='ready'&&btn('Download PDF',()=>dl(`/certificates/${c.id}/download`,'event-certificate.pdf'),'s')]],'No certificates yet'))},
  galleryActions:(m,{id,show})=>{const adm=can('event.manage');return[adm&&m.moderation_status==='pending'&&btn('Approve',async()=>{await api('POST',`/events/${id}/media/${m.id}/moderate`,{decision:'approve'});show(id)},'s'),adm&&m.moderation_status==='pending'&&btn('Reject',async()=>{const reason=await ask('Reject photo','The photo stays out of the shared gallery.',{confirm:'Reject',danger:true,reason:true});if(reason==null)return;await api('POST',`/events/${id}/media/${m.id}/moderate`,{decision:'reject',reason:reason||'Not approved for the gallery'});show(id)},'d')]},
 };
 function eventReschedule(e,onDone){const local=e.starts_at?new Date(new Date(e.starts_at).getTime()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16):'';
