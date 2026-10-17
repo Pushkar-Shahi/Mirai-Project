@@ -96,6 +96,7 @@ async def update_whatsapp_preference(
 async def list_notifications(
     unread_only: bool = False,
     limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
     user: dict = Depends(current_user),
     conn=Depends(get_conn),
 ):
@@ -106,14 +107,57 @@ async def list_notifications(
                     AS deliveries
            FROM notifications n
            WHERE n.user_id=$1 AND ($2::boolean = false OR n.read_at IS NULL)
-           ORDER BY n.send_at DESC, n.id DESC LIMIT $3""",
-        user["id"], unread_only, limit,
+           ORDER BY n.send_at DESC, n.id DESC LIMIT $3 OFFSET $4""",
+        user["id"], unread_only, limit, offset,
+    )
+    total = await conn.fetchval(
+        """SELECT count(*) FROM notifications n
+           WHERE n.user_id=$1 AND ($2::boolean = false OR n.read_at IS NULL)""",
+        user["id"], unread_only,
     )
     unread = await conn.fetchval(
         "SELECT count(*) FROM notifications WHERE user_id=$1 AND read_at IS NULL",
         user["id"],
     )
-    return {"unread_count": unread, "items": [dict(row) for row in rows]}
+    return {"total": total or 0, "unread_count": unread, "items": [dict(row) for row in rows]}
+
+
+@router.get("/sent")
+async def list_sent_notifications(
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    user: dict = Depends(current_user),
+    conn=Depends(get_conn),
+):
+    if user["role"] not in ("super_admin", "campus_admin", "advisor", "coordinator"):
+        raise HTTPException(403, "Authorities only")
+
+    if user["role"] == "super_admin":
+        where_clause = "(n.actor_id = $1 OR n.actor_id IS NOT NULL)"
+    else:
+        where_clause = "n.actor_id = $1"
+
+    rows = await conn.fetch(
+        f"""SELECT n.id, n.kind, n.payload, n.send_at, n.sent_at, n.read_at, n.cancelled_at,
+                  u.name AS recipient_name, u.role AS recipient_role,
+                  ca.name AS recipient_campus, u.student_code AS recipient_code,
+                  COALESCE((SELECT jsonb_agg(jsonb_build_object('channel', d.channel, 'status', d.status, 'error_code', d.error_code, 'attempts', d.attempts))
+                            FROM notification_deliveries d WHERE d.notification_id=n.id), '[]'::jsonb)
+                    AS deliveries
+           FROM notifications n
+           JOIN users u ON u.id = n.user_id
+           LEFT JOIN campus ca ON ca.id = u.campus_id
+           WHERE {where_clause}
+           ORDER BY n.send_at DESC, n.id DESC LIMIT $2 OFFSET $3""",
+        user["id"], limit, offset,
+    )
+    total = await conn.fetchval(
+        f"""SELECT count(*) FROM notifications n
+           JOIN users u ON u.id = n.user_id
+           WHERE {where_clause}""",
+        user["id"],
+    )
+    return {"total": total or 0, "items": [dict(row) for row in rows]}
 
 
 @router.post("/{notification_id}/read")

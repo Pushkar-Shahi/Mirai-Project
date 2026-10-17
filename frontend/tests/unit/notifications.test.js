@@ -60,6 +60,41 @@ describe.each([
     expect(view.textContent).toContain('Email me reminders');
     expect(view.textContent).not.toContain('Save WhatsApp settings');
   });
+
+  test('authorities have Received and Sent tabs, students do not (B3)', async () => {
+    const extra = {
+      'GET /notifications?limit=100': {unread_count: 0, items: []},
+      'GET /notifications/sent?limit=50&offset=0': {
+        total: 1,
+        items: [{
+          id: 10,
+          kind: 'club_day.announced',
+          payload: {title: 'Robotics Day'},
+          send_at: '2026-10-17T10:00:00Z',
+          sent_at: '2026-10-17T10:00:01Z',
+          recipient_name: 'Student One',
+          recipient_role: 'student',
+          recipient_campus: 'Rathinam',
+          deliveries: [{channel: 'whatsapp', status: 'sent'}, {channel: 'email', status: 'sent'}]
+        }]
+      }
+    };
+    const { view } = await mountTab(portal, 'Notifications', role, 'success', extra);
+    await settle();
+    const sentBtn = find(view, 'button', 'Sent');
+    const receivedBtn = find(view, 'button', 'Received');
+    if (role === 'student') {
+      expect(sentBtn).toBeUndefined();
+      expect(receivedBtn).toBeUndefined();
+    } else {
+      expect(sentBtn).toBeDefined();
+      expect(receivedBtn).toBeDefined();
+      sentBtn.click();
+      await settle();
+      expect(view.textContent).toContain('Student One');
+      expect(view.textContent).toContain('Robotics Day');
+    }
+  });
 });
 
 test('the unread badge counts and caps at 9+', async () => {
