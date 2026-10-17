@@ -25,10 +25,11 @@ I could not see your deployed environment, so the root cause is established by r
 | A | 20+ tabs fail across portals (see table below) | API served traffic on a database behind the code | Startup now refuses to run when `AUTO_MIGRATE=0` and migrations are pending; `/health` returns 503 with `pending_migrations`; unhandled DB "missing table/column" becomes a 503 naming `python -m app.migrate` | `backend/tests/unit/test_schema_guard.py` | 5f943d8 |
 | B | Errors looked like CORS / "cannot reach the server" | Error responses bypassed CORSMiddleware | `app/core/errors.py` error boundary inside CORS: JSON body, CORS headers kept | `test_schema_guard.py` | 5f943d8 |
 | C | Deployed portals pointed at a demo API | Silent default in `build-all-portals.mjs`, hardcoded URL in hub | Build requires `MIRAI_API_BASE_URL`; hub removed | `frontend/tests`, Karma | c6e8c63 |
-| D | Check-in lost the typed code when the QR CDN is blocked | `tk.textContent` set after awaiting the library; failure stopped polling | Show the code first; QR failure only replaces the QR box | `checkin-qr-blocked.test.js` (fails on old code), `e2e/tabs.spec.mjs` | see git log |
-| E | Smoke/e2e asserted the old campus name "Main Campus" | Seed uses "Rathinam" | Compare with the account's own campus | `smoke_mirai.py` 110/110, `e2e/authorization`, `workflows` | see git log |
+| D | Check-in lost the typed code when the QR CDN is blocked | `tk.textContent` set after awaiting the library; failure stopped polling | Show the code first; QR failure only replaces the QR box | `checkin-qr-blocked.test.js` (fails on old code), `e2e/tabs.spec.mjs` | 15901c7 (fix), c9144f4 (tests) |
+| E | Smoke/e2e asserted the old campus name "Main Campus" | Seed uses "Rathinam" | Compare with the account's own campus | `smoke_mirai.py` 110/110, `e2e/authorization`, `workflows` | 15901c7, c9144f4 |
 | F | Sign-out e2e never confirmed the dialog | Pre-existing | Test confirms | `e2e/auth.spec.mjs` | c6e8c63 |
-| G | Dev launcher links broke between portals and the new login site | Relative dev URLs were portal-relative | Root-relative dev URLs | `e2e/development.spec.mjs` | see git log |
+| G | Dev launcher links broke between portals and the new login site | Relative dev URLs were portal-relative | Root-relative dev URLs | `e2e/development.spec.mjs` | c9144f4 |
+| H | e2e "Campus Manager: approves the budget" failed; in serial mode it also kept the 8 later workflow tests (inbox, notification history, campus scoping) from running | Same stale-seed problem as E: asserted "Approved by Main Campus Admin"; the app shows the real approver, "Rathinam Campus Admin" | The test reads the approver's name from `/auth/me` | `e2e/workflows.spec.mjs` (21/21 with the PDF test excluded); CI now installs Pango for WeasyPrint | see git log |
 
 ## Per-tab checklist
 
@@ -51,6 +52,6 @@ See `docs/ROLE_PORTALS.md` section 6. Tests: `login.test.js`, `portal-runtime.te
 ## Not verified
 
 - Your deployed Cloudflare/Render environment (not accessible); only a local stale-schema reproduction.
-- `e2e/workflows.spec.mjs` "Student: ... downloads the PDF" fails on this Mac because WeasyPrint's system libraries (pango/gobject) are missing, not because of the code. It should pass in CI on Linux.
+- `e2e/workflows.spec.mjs` "Student: ... downloads the PDF" fails on this Mac because WeasyPrint's system libraries (pango/gobject) are missing (`import weasyprint` raises OSError in the API's venv), not because of the code. It should pass in CI on Linux. The file runs in serial mode, so locally that failure stops the remaining workflow tests; run them with `--grep-invert "downloads the PDF"`.
 - Karma's console-error hook was not mutation-tested after a tooling hiccup; the other Karma assertions (navigation, redirects, storage) were.
 - Rotate `JWT_SECRET`, `CERT_SECRET` and `POSTGRES_PASSWORD`: they exist in old Git history.
