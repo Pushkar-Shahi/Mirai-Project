@@ -9,8 +9,6 @@ export const portalConfig=Object.freeze({
   expectedRole:role,
   title,
   spaceLabel:'Student space',
-  identifierLabel:'Email or student ID',
-  loginIntro:'Student accounts open this site. Campus manager, super admin and other staff accounts open their own websites.',
   // Navigation order; the first page is home. pages.js supplies one renderer per entry.
   pages:Object.freeze(['Home', 'Clubs', 'Days', 'Check-in', 'Submit', 'Certs', 'Events', 'Records', 'Notifications']),
   // Page subtitles that differ from shared/navigation/page-meta.js.

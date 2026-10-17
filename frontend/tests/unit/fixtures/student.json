@@ -1,0 +1,297 @@
+{
+ "GET /checkin/attendance/me": [],
+ "GET /memberships/me": [
+  {
+   "id": 1,
+   "student_id": 5,
+   "club_id": 1,
+   "type": "primary",
+   "status": "approved",
+   "decided_by": 4,
+   "decided_at": "2026-10-16T18:09:49.239086+00:00",
+   "created_at": "2026-10-16T18:09:49.231811+00:00",
+   "club_name": "Robotics"
+  }
+ ],
+ "GET /notifications?limit=1": {
+  "unread_count": 0,
+  "items": []
+ },
+ "GET /club-days?upcoming=true": [],
+ "GET /notifications?limit=5": {
+  "unread_count": 0,
+  "items": []
+ },
+ "GET /clubs": [
+  {
+   "id": 1,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "name": "Robotics",
+   "description": "",
+   "capacity": 2,
+   "approved_count": 1,
+   "advisor_name": "Dr. Advisor",
+   "rules": {},
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "id": 2,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "name": "Coding Club",
+   "description": "",
+   "capacity": 30,
+   "approved_count": 0,
+   "advisor_name": "Dr. Advisor",
+   "rules": {},
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "id": 3,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "name": "Mirai Smoke 174189 B",
+   "description": "Edited",
+   "capacity": 10,
+   "approved_count": 1,
+   "advisor_name": "Dr. Advisor",
+   "rules": {},
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "id": 5,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "name": "Proposed 174189",
+   "description": "",
+   "capacity": 5,
+   "approved_count": 0,
+   "advisor_name": null,
+   "rules": {},
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "id": 6,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "name": "Mirai Smoke 174196 B",
+   "description": "Edited",
+   "capacity": 10,
+   "approved_count": 1,
+   "advisor_name": "Dr. Advisor",
+   "rules": {},
+   "approval_status": "approved",
+   "is_active": true
+  }
+ ],
+ "GET /club-days": [
+  {
+   "id": 1,
+   "club_id": 1,
+   "day_date": "2026-10-10",
+   "title": "Stage 3 smoke",
+   "status": "closed",
+   "submission_deadline": "2099-01-01T00:00:00+00:00",
+   "created_by": 4,
+   "start_time": null,
+   "end_time": null,
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Robotics",
+   "club_active": true,
+   "plan_body": "Stage 3 smoke plan",
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null
+  },
+  {
+   "id": 2,
+   "club_id": 1,
+   "day_date": "2020-01-01",
+   "title": "Stage 3 smoke",
+   "status": "open",
+   "submission_deadline": "2020-01-01T00:00:00+00:00",
+   "created_by": 4,
+   "start_time": null,
+   "end_time": null,
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Robotics",
+   "club_active": true,
+   "plan_body": "Stage 3 smoke plan",
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null
+  }
+ ],
+ "GET /club-days/1/submissions": [
+  {
+   "id": 1,
+   "club_day_id": 1,
+   "student_id": 5,
+   "kind": "file",
+   "url": null,
+   "original_filename": "report.pdf",
+   "size_bytes": 35,
+   "sha256": "a580a4a92ef8d5c28ba07d43410bd8bdd0ea470461593dc7e5fbb354174098b9",
+   "submitted_at": "2026-10-16T18:09:49.283947+00:00",
+   "is_late": false,
+   "student_name": "Student One",
+   "student_code": "S001",
+   "evaluation": {
+    "scores": {
+     "content": 5,
+     "presentation": 4,
+     "participation": 5
+    },
+    "total": 14,
+    "max_total": 15,
+    "comment": null,
+    "evaluator": "Robotics Coordinator",
+    "status": "graded",
+    "evaluated_at": "2026-10-16T18:09:49.322671+00:00"
+   }
+  },
+  {
+   "id": 2,
+   "club_day_id": 1,
+   "student_id": 5,
+   "kind": "photo",
+   "url": null,
+   "original_filename": "team.png",
+   "size_bytes": 40,
+   "sha256": "629f4275ec7728373546c2565e62bc8bfa5577c1d8aa82a340c0436aa5c4eccf",
+   "submitted_at": "2026-10-16T18:09:49.292177+00:00",
+   "is_late": false,
+   "student_name": "Student One",
+   "student_code": "S001",
+   "evaluation": null
+  },
+  {
+   "id": 3,
+   "club_day_id": 1,
+   "student_id": 5,
+   "kind": "link",
+   "url": "https://example.com/my-slides",
+   "original_filename": null,
+   "size_bytes": null,
+   "sha256": null,
+   "submitted_at": "2026-10-16T18:09:49.294300+00:00",
+   "is_late": false,
+   "student_name": "Student One",
+   "student_code": "S001",
+   "evaluation": null
+  }
+ ],
+ "GET /certificates/me": [],
+ "GET /events": [],
+ "GET /transcripts/me": {
+  "student": {
+   "id": 5,
+   "name": "Student One",
+   "student_code": "S001",
+   "campus": "Rathinam"
+  },
+  "memberships": [
+   {
+    "club_name": "Robotics",
+    "type": "primary",
+    "status": "approved",
+    "created_at": "2026-10-16T18:09:49.231811+00:00",
+    "decided_at": "2026-10-16T18:09:49.239086+00:00"
+   }
+  ],
+  "club_days": [
+   {
+    "id": 2,
+    "title": "Stage 3 smoke",
+    "day_date": "2020-01-01",
+    "start_time": null,
+    "end_time": null,
+    "club_day_status": "open",
+    "club_name": "Robotics",
+    "topic": null,
+    "format": null,
+    "attendance_count": 0,
+    "checked_in_at": null,
+    "checked_in_late": false,
+    "submission_count": 1,
+    "latest_submission_kind": "file",
+    "latest_submitted_at": "2026-10-16T18:09:49.297116+00:00",
+    "grading_status": "pending",
+    "score": null,
+    "presentation_title": null,
+    "certificate_status": null
+   },
+   {
+    "id": 1,
+    "title": "Stage 3 smoke",
+    "day_date": "2026-10-10",
+    "start_time": null,
+    "end_time": null,
+    "club_day_status": "closed",
+    "club_name": "Robotics",
+    "topic": null,
+    "format": null,
+    "attendance_count": 0,
+    "checked_in_at": null,
+    "checked_in_late": false,
+    "submission_count": 3,
+    "latest_submission_kind": "link",
+    "latest_submitted_at": "2026-10-16T18:09:49.294300+00:00",
+    "grading_status": "pending",
+    "score": 14,
+    "presentation_title": null,
+    "certificate_status": null
+   }
+  ],
+  "events": [],
+  "totals": {
+   "club_days_attended": 0,
+   "submissions": 4,
+   "graded_club_days": 1,
+   "average_score": 14,
+   "max_score": 15,
+   "presentations": 0,
+   "events_registered": 0,
+   "events_attended": 0,
+   "certificates": 0
+  }
+ },
+ "GET /notifications/email-preference": {
+  "enabled": true,
+  "available": false
+ },
+ "GET /notifications/whatsapp-preference": {
+  "enabled": false,
+  "phone_last4": null,
+  "opted_in_at": null
+ },
+ "GET /notifications?limit=100": {
+  "unread_count": 0,
+  "items": []
+ },
+ "GET /auth/me": {
+  "id": 5,
+  "role": "student",
+  "campus_id": 1,
+  "name": "Student One",
+  "email": "s001@demo.edu",
+  "student_code": "S001",
+  "campus_name": "Rathinam",
+  "permissions": [
+   "checkin.scan",
+   "club.join",
+   "club.view",
+   "event.register",
+   "submission.create"
+  ]
+ }
+}

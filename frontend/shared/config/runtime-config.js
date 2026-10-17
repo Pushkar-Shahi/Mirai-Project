@@ -14,6 +14,14 @@ const devApi = () => {
   return l ? `${l.protocol === 'https:' ? 'https:' : 'http:'}//${l.hostname || 'localhost'}:8000` : '';
 };
 
+// Portals live at <root>/apps/<id>/ and the sign-in site at <root>/login/, so the same
+// address works from any of them (and from the launcher).
+const devPortalUrl = id => {
+  const l = globalThis.location;
+  const root = l ? l.pathname.replace(/(?:apps\/[^/]+\/|login\/)?[^/]*$/, '') : '/';
+  return `${root}apps/${id}/`;
+};
+
 export const runtimeConfig = Object.freeze({
   environment: 'development',
   apiBaseUrl: devApi(),
@@ -29,13 +37,10 @@ export const runtimeConfig = Object.freeze({
     ['admin@demo.edu', 'campus_admin', 'Campus manager'],
     ['super@demo.edu', 'super_admin', 'Super admin'],
   ],
+  // The central sign-in site. Blank: each portal shows the same sign-in screen itself.
+  // Builds set it from MIRAI_LOGIN_URL; then portals send signed-out visitors there.
+  loginUrl: '',
   // Where each portal lives, keyed by portal id. Used to point a signed-in user at the
   // right portal for their role. Locally every portal is served next to the others.
-  portalUrls: {
-    'super-admin': '../super-admin/',
-    'campus-manager': '../campus-manager/',
-    advisor: '../advisor/',
-    coordinator: '../coordinator/',
-    student: '../student/',
-  },
+  portalUrls: Object.fromEntries(['super-admin', 'campus-manager', 'advisor', 'coordinator', 'student'].map(id => [id, devPortalUrl(id)])),
 });

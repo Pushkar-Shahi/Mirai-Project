@@ -21,7 +21,7 @@ export const test = base.extend({
       if (['data:', 'blob:'].includes(url.protocol)) return;
       const local = url.origin.match(LOCAL_TEST_ORIGIN);
       const ok = url.origin === apiOrigin || url.origin === 'https://cdnjs.cloudflare.com' ||
-        (local && Number(local[1]) > PORT_BASE && Number(local[1]) <= PORT_BASE + 12);
+        (local && Number(local[1]) > PORT_BASE && Number(local[1]) <= PORT_BASE + 14);
       if (!ok) problems.push(`unexpected request to ${url.origin}`);
     });
     await use(page);

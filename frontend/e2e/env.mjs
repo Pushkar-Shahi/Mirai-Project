@@ -9,6 +9,10 @@ export const OUTSIDER_URL = `http://127.0.0.1:${PORT_BASE + 11}/`;
 // The unbuilt source, served like scripts/run_local.sh does (development config).
 export const DEV_URL = `http://127.0.0.1:${PORT_BASE + 12}/`;
 
+// The central sign-in site, and a coordinator portal built to use it (MIRAI_LOGIN_URL set).
+export const LOGIN_URL = `http://127.0.0.1:${PORT_BASE + 13}/`;
+export const CENTRAL_COORDINATOR_URL = `http://127.0.0.1:${PORT_BASE + 14}/`;
+
 // Accounts from backend/scripts/seed.py (development data only).
 export const DEMO_PASSWORD = 'password123';
 export const DEMO = {

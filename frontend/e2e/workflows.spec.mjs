@@ -51,7 +51,7 @@ async function createAccount(page, {name, email, password}, role, code) {
   if (code) await field(account, 'student_code').fill(code);
   await account.getByRole('button', {name: 'Create account'}).click();
   await expectToast(page, 'Account created');
-  await expect(card(page, 'Accounts').locator('tr', {hasText: email})).toContainText('Main Campus');
+  await expect(card(page, 'Accounts').locator('tr', {hasText: email})).toContainText('Rathinam');
 }
 
 test('Campus Manager: provisions accounts, a club and its coordinator', async ({page}) => {
@@ -260,13 +260,15 @@ test('Coordinator: requests a budget it cannot approve itself', async ({page}) =
   await expect(row.getByRole('button', {name: 'Approve'})).toHaveCount(0);
 });
 
-test('Campus Manager: approves the budget', async ({page}) => {
+test('Campus Manager: approves the budget', async ({page, request}) => {
+  // The approver's name comes from the account itself, not from a hardcoded seed value.
+  const me = await (await apiAs(request, await apiToken(request, DEMO['campus-manager'])).get('/auth/me')).json();
   await signedIn(page, 'campus-manager');
   await go(page, 'Budgets');
   await page.locator('tr', {hasText: NEW.budget}).getByRole('button', {name: 'Approve'}).click();
   await dialog(page).getByRole('button', {name: 'Approve'}).click();
   await expectToast(page, 'Request approved');
-  await expect(page.locator('tr', {hasText: NEW.budget})).toContainText('Approved by Main Campus Admin');
+  await expect(page.locator('tr', {hasText: NEW.budget})).toContainText(`Approved by ${me.name}`);
 });
 
 test('Campus Manager: creates an event', async ({page}) => {

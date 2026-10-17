@@ -3,7 +3,9 @@
   "scripts": {
     "build": "node scripts/build-all-portals.mjs",
     "cf:dev": "wrangler dev",
-    "cf:deploy": "wrangler deploy"
+    "cf:deploy": "wrangler deploy",
+    "test:all": "node scripts/test-all.mjs",
+    "whatsapp:bridge": "node whatsapp-bridge/server.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.136.0"

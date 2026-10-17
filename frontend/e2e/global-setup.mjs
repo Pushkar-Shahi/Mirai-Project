@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 
 import {buildPortal} from '../scripts/build-portal.mjs';
 import {startServer} from '../scripts/serve.mjs';
-import {API, DEV_URL, PORTAL_IDS, OFFLINE_URL, OUTSIDER_URL, portalUrl, portalPort, PORT_BASE} from './env.mjs';
+import {API, DEV_URL, LOGIN_URL, CENTRAL_COORDINATOR_URL, PORTAL_IDS, OFFLINE_URL, OUTSIDER_URL, portalUrl, portalPort, PORT_BASE} from './env.mjs';
 
 const FRONTEND = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BUILDS = path.join(FRONTEND, '.e2e-builds');
@@ -28,6 +28,13 @@ export default async function globalSetup() {
     await buildPortal({portal: id, out}, env);
     servers.push(await startServer(out, {port: portalPort(id)}));
   }
+  // The central sign-in site, and a coordinator portal that sends signed-out visitors to it.
+  const login = path.join(BUILDS, 'login');
+  await buildPortal({portal: 'login', out: login}, env);
+  servers.push(await startServer(login, {port: Number(new URL(LOGIN_URL).port)}));
+  const central = path.join(BUILDS, 'coordinator-central');
+  await buildPortal({portal: 'coordinator', out: central}, {...env, MIRAI_LOGIN_URL: LOGIN_URL});
+  servers.push(await startServer(central, {port: Number(new URL(CENTRAL_COORDINATOR_URL).port)}));
   // A student portal whose API address points at a closed port: network failure handling.
   const offline = path.join(BUILDS, 'student-offline');
   await buildPortal({portal: 'student', out: offline, apiBaseUrl: 'http://127.0.0.1:9'}, {});

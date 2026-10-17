@@ -132,8 +132,14 @@ Frontend (Node.js 18+):
 ```
 node --test frontend/tests/*.test.mjs               # portal config, module boundaries, build script
 cd frontend && npm ci && npx playwright install chromium
+npm run test:unit                                    # Jest + jsdom: API client, sign-in, every role x tab x API state
+npm run test:coverage                                # same, with a coverage report (threshold 80% lines on frontend/shared)
+npm run test:karma                                   # Karma + headless Chrome: the BUILT sites load, navigate and redirect (mock API, no database)
+npm run capture-fixtures                             # re-record tests/unit/fixtures from a running demo API
 MIRAI_E2E_API=http://127.0.0.1:8000 npm run test:e2e  # all five portals against a running API with demo data
 ```
+
+Everything in order (backend pytest, node --test, Jest with coverage, Karma): `npm run test:all` from the repository root; add `-- --e2e` for Playwright (needs the API). CI (`.github/workflows/ci.yml`) runs all of it with a PostgreSQL service. Karma is deprecated upstream, so that suite is kept thin; Playwright covers the same ground.
 
 The end-to-end tests build every portal for the given API, serve each on its own origin (ports 5601-5605, the unbuilt source on 5612) and run real workflows through the portal that owns each step. They create their own accounts and clubs; run them against development data only.
 

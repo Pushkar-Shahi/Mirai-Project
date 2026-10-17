@@ -16,6 +16,8 @@ import {setSession} from '../core/state.js';
 // two portals served from one origin during development never share a session.
 const tokenKey=portal=>`mirai:${portal.portalId}:token`;
 const HANDOFF='#handoff=';
+// Page navigation goes through this object so tests can observe redirects (jsdom cannot navigate).
+export const redirect={to:url=>location.replace(url)};
 export const storedToken=portal=>{try{return sessionStorage.getItem(tokenKey(portal))}catch{return null}};
 export const storeToken=(portal,token)=>{try{sessionStorage.setItem(tokenKey(portal),token)}catch{}};
 export const roleMatches=(portal,user)=>!!user&&user.role===portal.expectedRole;
@@ -24,24 +26,49 @@ export const portalUrlForRole=role=>{
  const home=portalForRole(role);
  return home&&runtimeConfig.portalUrls?.[home.id]||null};
 
-// Reads a one-time token from the address bar (#handoff=…) and removes it so it is not
-// left in history. Used when another page sends this account to the portal for its role.
-export function takeHandoffToken(){
+// A hash we are willing to open after sign-in: a page route such as #/Grading or
+// #/Check-in?session=3. Anything else (other origins, scripts) is dropped, so a crafted
+// link cannot use the handoff as an open redirect.
+const SAFE_NEXT=/^#\/[\w %-]{1,60}(\?[\w=&%.,:-]{0,200})?$/;
+export const safeNext=n=>typeof n==='string'&&SAFE_NEXT.test(n)?n:null;
+
+// Reads a one-time token (and the page the user wanted) from the address bar
+// (#handoff=…&next=…) and removes them so they are not left in history. Used when another
+// page sends this account to the portal for its role.
+export function takeHandoff(){
  const hash=location.hash||'';
- if(!hash.startsWith(HANDOFF))return null;
- const token=decodeURIComponent(hash.slice(HANDOFF.length));
+ if(!hash.startsWith(HANDOFF))return{token:null,next:null};
+ const q=new URLSearchParams(hash.slice(1));
  try{history.replaceState(null,'',location.pathname+location.search)}catch{}
- return token||null}
+ return{token:q.get('handoff')||null,next:safeNext(q.get('next'))}}
+export const takeHandoffToken=()=>takeHandoff().token;
 
 // Opens the portal that serves this role, carrying the token in the fragment so it is
-// not sent to the server. `url` overrides the configured address (the local hub).
-export function goToRolePortal(user,token,{url}={}){
+// not sent to the server. `url` overrides the configured address (the local hub), `next`
+// is the page to open there.
+export function goToRolePortal(user,token,{url,next}={}){
  const destUrl=url||portalUrlForRole(user.role);
  if(!destUrl||!token)return false;
- const dest=new URL(destUrl,location.href);
- dest.hash='handoff='+encodeURIComponent(token);
- location.replace(dest.href);
+ const dest=new URL(destUrl,location.href),q=new URLSearchParams({handoff:token});
+ if(safeNext(next))q.set('next',next);
+ dest.hash=q.toString();
+ redirect.to(dest.href);
  return true}
+
+// Where a portal sends a visitor who has no session (or whose session ended) when a
+// central sign-in site is configured. Returns false when it is not.
+export function goToLogin({reason,next,url=runtimeConfig.loginUrl}={}){
+ const base=url;
+ if(!base)return false;
+ const dest=new URL(base,location.href);
+ if(reason)dest.searchParams.set('reason',reason);
+ if(safeNext(next))dest.searchParams.set('next',next);
+ redirect.to(dest.href);
+ return true}
+
+export const REASON_MESSAGES=Object.freeze({
+ expired:'Your session has expired. Please sign in again.',
+ signed_out:'You have been signed out.'});
 
 // Returns {ok:true,user} for an account this portal serves. For another role it returns
 // {ok:false,user,access_token} without storing the token here, so the caller can send

@@ -10,7 +10,8 @@ let portal={pages:[]},P={},navSeq=0;
 export function configureRouter(portalConfig,pages){portal=portalConfig;P=pages}
 export const hasPage=t=>portal.pages.includes(t);
 export const homeOf=()=>portal.pages[0];
-export const pageFromHash=()=>decodeURIComponent(location.hash.replace(/^#\/?/,'').split('?')[0]);
+export const pageOfHash=hash=>decodeURIComponent(hash.replace(/^#\/?/,'').split('?')[0]);
+export const pageFromHash=()=>pageOfHash(location.hash);
 export const hashParams=()=>new URLSearchParams(location.hash.split('?')[1]||'');
 export function setParams(params){const q=new URLSearchParams(params).toString();history.replaceState(null,'',`#/${encodeURIComponent(currentPage)}${q?'?'+q:''}`)}
 export function nav(t,params){const q=params?'?'+new URLSearchParams(params):'',target='#/'+encodeURIComponent(t)+q;if(location.hash===target)render(t);else location.hash=target}

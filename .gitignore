@@ -11,6 +11,8 @@ dist/
 # Frontend test tooling
 node_modules/
 frontend/.e2e-builds/
+frontend/karma-builds/
+frontend/coverage/
 frontend/playwright-report/
 frontend/test-results/
 

@@ -68,6 +68,15 @@ async def apply_migrations(conn: asyncpg.Connection, directory: Path = MIGRATION
         await conn.execute("SELECT pg_advisory_unlock($1)", LOCK_KEY)
 
 
+async def pending_migrations(conn: asyncpg.Connection, directory: Path = MIGRATIONS_DIR) -> list[str]:
+    """Migration files this database has not applied yet (all of them if it is untracked)."""
+    files = [p.name for p in migration_files(directory)]
+    if await conn.fetchval("SELECT to_regclass('public.schema_migrations')") is None:
+        return files
+    applied = {r["version"] for r in await conn.fetch("SELECT version FROM schema_migrations")}
+    return [f for f in files if f not in applied]
+
+
 async def connect_with_retry(database_url: str, attempts: int = 10, delay: float = 2.0):
     """The database may still be starting (docker) or waking up (free hosting)."""
     for attempt in range(1, attempts + 1):

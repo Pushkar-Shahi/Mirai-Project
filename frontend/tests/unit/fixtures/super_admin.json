@@ -1,0 +1,1285 @@
+{
+ "GET /notifications?limit=1": {
+  "unread_count": 0,
+  "items": []
+ },
+ "GET /dashboards/clubs": [
+  {
+   "club_id": 2,
+   "club_name": "Coding Club",
+   "members": 0,
+   "capacity": 30,
+   "club_days": 0,
+   "last_club_day": null,
+   "attendance_records": 0,
+   "submissions": 0,
+   "avg_score": null,
+   "certificates": 0,
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "club_id": 3,
+   "club_name": "Mirai Smoke 174189 B",
+   "members": 1,
+   "capacity": 10,
+   "club_days": 1,
+   "last_club_day": "2026-10-18",
+   "attendance_records": 1,
+   "submissions": 2,
+   "avg_score": 9,
+   "certificates": 0,
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "club_id": 6,
+   "club_name": "Mirai Smoke 174196 B",
+   "members": 1,
+   "capacity": 10,
+   "club_days": 1,
+   "last_club_day": "2026-10-18",
+   "attendance_records": 1,
+   "submissions": 2,
+   "avg_score": 9,
+   "certificates": 0,
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "club_id": 9,
+   "club_name": "Mirai Smoke 174214 B",
+   "members": 1,
+   "capacity": 10,
+   "club_days": 1,
+   "last_club_day": "2026-10-18",
+   "attendance_records": 1,
+   "submissions": 2,
+   "avg_score": 9,
+   "certificates": 0,
+   "approval_status": "approved",
+   "is_active": true
+  },
+  {
+   "club_id": 5,
+   "club_name": "Proposed 174189",
+   "members": 0,
+   "capacity": 5,
+   "club_days": 0,
+   "last_club_day": null,
+   "attendance_records": 0,
+   "submissions": 0,
+   "avg_score": null,
+   "certificates": 0,
+   "approval_status": "approved",
+   "is_active": true
+  }
+ ],
+ "GET /dashboards/summary": {
+  "clubs": 8,
+  "clubs_active": 8,
+  "clubs_pending_approval": 0,
+  "clubs_inactive": 0,
+  "members": 4,
+  "club_days_total": 11,
+  "club_days_approved_or_later": 5,
+  "club_days_by_status": {
+   "open": 1,
+   "closed": 1,
+   "planned": 6,
+   "submissions": 3
+  },
+  "attendance_records": 3,
+  "submissions": 10,
+  "certificates": 0,
+  "events": 0,
+  "event_registrations": 0,
+  "events_by_type": []
+ },
+ "GET /dashboards/trend?months=6": [
+  {
+   "month": "2026-05",
+   "club_days": 0,
+   "attendance_records": 0,
+   "submissions": 0
+  },
+  {
+   "month": "2026-06",
+   "club_days": 0,
+   "attendance_records": 0,
+   "submissions": 0
+  },
+  {
+   "month": "2026-07",
+   "club_days": 0,
+   "attendance_records": 0,
+   "submissions": 0
+  },
+  {
+   "month": "2026-08",
+   "club_days": 0,
+   "attendance_records": 0,
+   "submissions": 0
+  },
+  {
+   "month": "2026-09",
+   "club_days": 0,
+   "attendance_records": 0,
+   "submissions": 0
+  }
+ ],
+ "GET /dashboards/campuses": [
+  {
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "clubs": 8,
+   "members": 4,
+   "club_days": 5,
+   "attendance_records": 3,
+   "submissions": 10,
+   "average_score": 10.25
+  }
+ ],
+ "GET /dashboards/top-contributors?limit=10": [
+  {
+   "student_id": 5,
+   "name": "Student One",
+   "student_code": "S001",
+   "attendance_records": 0,
+   "submissions": 4,
+   "event_registrations": 0,
+   "certificates": 0,
+   "verified_activity_count": 4
+  },
+  {
+   "student_id": 9,
+   "name": "Smoke Student 174189",
+   "student_code": "SMK174189",
+   "attendance_records": 1,
+   "submissions": 2,
+   "event_registrations": 0,
+   "certificates": 0,
+   "verified_activity_count": 3
+  },
+  {
+   "student_id": 11,
+   "name": "Smoke Student 174196",
+   "student_code": "SMK174196",
+   "attendance_records": 1,
+   "submissions": 2,
+   "event_registrations": 0,
+   "certificates": 0,
+   "verified_activity_count": 3
+  },
+  {
+   "student_id": 13,
+   "name": "Smoke Student 174214",
+   "student_code": "SMK174214",
+   "attendance_records": 1,
+   "submissions": 2,
+   "event_registrations": 0,
+   "certificates": 0,
+   "verified_activity_count": 3
+  },
+  {
+   "student_id": 10,
+   "name": "Code Test",
+   "student_code": "MIR-24_174189",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0,
+   "verified_activity_count": 0
+  }
+ ],
+ "GET /dashboards/students?limit=100": [
+  {
+   "student_id": 10,
+   "name": "Code Test",
+   "student_code": "MIR-24_174189",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 12,
+   "name": "Code Test",
+   "student_code": "MIR-24_174196",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 14,
+   "name": "Code Test",
+   "student_code": "MIR-24_174214",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 8,
+   "name": "Hitech Student",
+   "student_code": "N001",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 9,
+   "name": "Smoke Student 174189",
+   "student_code": "SMK174189",
+   "attendance_records": 1,
+   "submissions": 2,
+   "event_registrations": 0,
+   "certificates": 0
+  }
+ ],
+ "GET /dashboards/zero-participation": [
+  {
+   "student_id": 10,
+   "name": "Code Test",
+   "student_code": "MIR-24_174189",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 12,
+   "name": "Code Test",
+   "student_code": "MIR-24_174196",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 14,
+   "name": "Code Test",
+   "student_code": "MIR-24_174214",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 8,
+   "name": "Hitech Student",
+   "student_code": "N001",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  },
+  {
+   "student_id": 7,
+   "name": "Student Three",
+   "student_code": "S003",
+   "attendance_records": 0,
+   "submissions": 0,
+   "event_registrations": 0,
+   "certificates": 0
+  }
+ ],
+ "GET /dashboards/inactive-clubs?weeks=4": [
+  {
+   "club_id": 2,
+   "club_name": "Coding Club",
+   "members": 0,
+   "last_club_day": null
+  },
+  {
+   "club_id": 5,
+   "club_name": "Proposed 174189",
+   "members": 0,
+   "last_club_day": null
+  },
+  {
+   "club_id": 8,
+   "club_name": "Proposed 174196",
+   "members": 0,
+   "last_club_day": null
+  },
+  {
+   "club_id": 11,
+   "club_name": "Proposed 174214",
+   "members": 0,
+   "last_club_day": null
+  }
+ ],
+ "GET /dashboards/monthly-report?month=2026-10": {
+  "month": "2026-10",
+  "clubs": [
+   {
+    "club_id": 2,
+    "club_name": "Coding Club",
+    "club_days": 0,
+    "attendance_records": 0,
+    "unique_attendees": 0,
+    "attendance_participants": 0,
+    "members": 0,
+    "attendance_percentage": null,
+    "submissions": 0,
+    "average_score": null,
+    "highlight": null,
+    "certificates": 0
+   },
+   {
+    "club_id": 3,
+    "club_name": "Mirai Smoke 174189 B",
+    "club_days": 1,
+    "attendance_records": 1,
+    "unique_attendees": 1,
+    "attendance_participants": 1,
+    "members": 1,
+    "attendance_percentage": 100,
+    "submissions": 2,
+    "average_score": 9,
+    "highlight": "Plan flow",
+    "certificates": 0
+   },
+   {
+    "club_id": 6,
+    "club_name": "Mirai Smoke 174196 B",
+    "club_days": 1,
+    "attendance_records": 1,
+    "unique_attendees": 1,
+    "attendance_participants": 1,
+    "members": 1,
+    "attendance_percentage": 100,
+    "submissions": 2,
+    "average_score": 9,
+    "highlight": "Plan flow",
+    "certificates": 0
+   },
+   {
+    "club_id": 9,
+    "club_name": "Mirai Smoke 174214 B",
+    "club_days": 1,
+    "attendance_records": 1,
+    "unique_attendees": 1,
+    "attendance_participants": 1,
+    "members": 1,
+    "attendance_percentage": 100,
+    "submissions": 2,
+    "average_score": 9,
+    "highlight": "Plan flow",
+    "certificates": 0
+   },
+   {
+    "club_id": 5,
+    "club_name": "Proposed 174189",
+    "club_days": 0,
+    "attendance_records": 0,
+    "unique_attendees": 0,
+    "attendance_participants": 0,
+    "members": 0,
+    "attendance_percentage": null,
+    "submissions": 0,
+    "average_score": null,
+    "highlight": null,
+    "certificates": 0
+   }
+  ],
+  "highlights": [
+   {
+    "club_id": 1,
+    "club_name": "Robotics",
+    "highlight": "Stage 3 smoke",
+    "average_score": 14,
+    "submissions": 3
+   },
+   {
+    "club_id": 3,
+    "club_name": "Mirai Smoke 174189 B",
+    "highlight": "Plan flow",
+    "average_score": 9,
+    "submissions": 2
+   },
+   {
+    "club_id": 6,
+    "club_name": "Mirai Smoke 174196 B",
+    "highlight": "Plan flow",
+    "average_score": 9,
+    "submissions": 2
+   },
+   {
+    "club_id": 9,
+    "club_name": "Mirai Smoke 174214 B",
+    "highlight": "Plan flow",
+    "average_score": 9,
+    "submissions": 2
+   }
+  ],
+  "totals": {
+   "club_days": 4,
+   "attendance_records": 3,
+   "submissions": 9,
+   "certificates": 0,
+   "unique_attendees_overall": 3,
+   "average_score": 9.71,
+   "attendance_percentage": 75
+  },
+  "reconciled": true,
+  "mismatches": []
+ },
+ "GET /campuses": [
+  {
+   "id": 2,
+   "name": "Hitech"
+  },
+  {
+   "id": 3,
+   "name": "JU Sitapura"
+  },
+  {
+   "id": 1,
+   "name": "Rathinam"
+  }
+ ],
+ "GET /users": [
+  {
+   "id": 1,
+   "campus_id": null,
+   "campus_name": null,
+   "role": "super_admin",
+   "student_code": null,
+   "email": "super@demo.edu",
+   "name": "Super Admin",
+   "created_at": "2026-10-16T17:47:57.025908+00:00"
+  },
+  {
+   "id": 3,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "advisor",
+   "student_code": null,
+   "email": "advisor@demo.edu",
+   "name": "Dr. Advisor",
+   "created_at": "2026-10-16T17:47:57.028148+00:00"
+  },
+  {
+   "id": 2,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "campus_admin",
+   "student_code": null,
+   "email": "admin@demo.edu",
+   "name": "Rathinam Campus Admin",
+   "created_at": "2026-10-16T17:47:57.027424+00:00"
+  },
+  {
+   "id": 4,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "coordinator",
+   "student_code": null,
+   "email": "coord@demo.edu",
+   "name": "Robotics Coordinator",
+   "created_at": "2026-10-16T17:47:57.028619+00:00"
+  },
+  {
+   "id": 10,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "student",
+   "student_code": "MIR-24_174189",
+   "email": "code174189@demo.edu",
+   "name": "Code Test",
+   "created_at": "2026-10-16T18:09:52.038762+00:00"
+  }
+ ],
+ "GET /clubs": [
+  {
+   "id": 1,
+   "campus_id": 1,
+   "name": "Robotics",
+   "advisor_id": 3,
+   "capacity": 2,
+   "rules": {},
+   "description": "",
+   "approval_status": "approved",
+   "approved_by": null,
+   "approved_at": null,
+   "created_by": null,
+   "is_active": true,
+   "deactivated_at": null,
+   "deactivated_by": null,
+   "approval_reason": null,
+   "created_at": "2026-10-16T17:47:57.031982+00:00",
+   "updated_at": "2026-10-16T17:47:57.031982+00:00",
+   "approved_count": 1,
+   "pending_count": 0,
+   "campus_name": "Rathinam",
+   "advisor_name": "Dr. Advisor",
+   "approved_by_name": null,
+   "created_by_name": null,
+   "deactivated_by_name": null,
+   "coordinators": [
+    {
+     "id": 4,
+     "name": "Robotics Coordinator"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "campus_id": 1,
+   "name": "Coding Club",
+   "advisor_id": 3,
+   "capacity": 30,
+   "rules": {},
+   "description": "",
+   "approval_status": "approved",
+   "approved_by": null,
+   "approved_at": null,
+   "created_by": null,
+   "is_active": true,
+   "deactivated_at": null,
+   "deactivated_by": null,
+   "approval_reason": null,
+   "created_at": "2026-10-16T17:47:57.033400+00:00",
+   "updated_at": "2026-10-16T17:47:57.033400+00:00",
+   "approved_count": 0,
+   "pending_count": 0,
+   "campus_name": "Rathinam",
+   "advisor_name": "Dr. Advisor",
+   "approved_by_name": null,
+   "created_by_name": null,
+   "deactivated_by_name": null,
+   "coordinators": []
+  },
+  {
+   "id": 3,
+   "campus_id": 1,
+   "name": "Mirai Smoke 174189 B",
+   "advisor_id": 3,
+   "capacity": 10,
+   "rules": {},
+   "description": "Edited",
+   "approval_status": "approved",
+   "approved_by": 2,
+   "approved_at": "2026-10-16T18:09:51.066616+00:00",
+   "created_by": 2,
+   "is_active": true,
+   "deactivated_at": null,
+   "deactivated_by": null,
+   "approval_reason": null,
+   "created_at": "2026-10-16T18:09:51.050269+00:00",
+   "updated_at": "2026-10-16T18:09:51.456605+00:00",
+   "approved_count": 1,
+   "pending_count": 0,
+   "campus_name": "Rathinam",
+   "advisor_name": "Dr. Advisor",
+   "approved_by_name": "Rathinam Campus Admin",
+   "created_by_name": "Rathinam Campus Admin",
+   "deactivated_by_name": null,
+   "coordinators": [
+    {
+     "id": 4,
+     "name": "Robotics Coordinator"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "campus_id": 1,
+   "name": "Proposed 174189",
+   "advisor_id": null,
+   "capacity": 5,
+   "rules": {},
+   "description": "",
+   "approval_status": "approved",
+   "approved_by": 2,
+   "approved_at": "2026-10-16T18:09:51.093357+00:00",
+   "created_by": 1,
+   "is_active": true,
+   "deactivated_at": null,
+   "deactivated_by": null,
+   "approval_reason": null,
+   "created_at": "2026-10-16T18:09:51.091240+00:00",
+   "updated_at": "2026-10-16T18:09:51.093357+00:00",
+   "approved_count": 0,
+   "pending_count": 0,
+   "campus_name": "Rathinam",
+   "advisor_name": null,
+   "approved_by_name": "Rathinam Campus Admin",
+   "created_by_name": "Super Admin",
+   "deactivated_by_name": null,
+   "coordinators": []
+  },
+  {
+   "id": 6,
+   "campus_id": 1,
+   "name": "Mirai Smoke 174196 B",
+   "advisor_id": 3,
+   "capacity": 10,
+   "rules": {},
+   "description": "Edited",
+   "approval_status": "approved",
+   "approved_by": 2,
+   "approved_at": "2026-10-16T18:09:57.717558+00:00",
+   "created_by": 2,
+   "is_active": true,
+   "deactivated_at": null,
+   "deactivated_by": null,
+   "approval_reason": null,
+   "created_at": "2026-10-16T18:09:57.702006+00:00",
+   "updated_at": "2026-10-16T18:09:58.108979+00:00",
+   "approved_count": 1,
+   "pending_count": 0,
+   "campus_name": "Rathinam",
+   "advisor_name": "Dr. Advisor",
+   "approved_by_name": "Rathinam Campus Admin",
+   "created_by_name": "Rathinam Campus Admin",
+   "deactivated_by_name": null,
+   "coordinators": [
+    {
+     "id": 4,
+     "name": "Robotics Coordinator"
+    }
+   ]
+  }
+ ],
+ "GET /users?role=advisor": [
+  {
+   "id": 3,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "advisor",
+   "student_code": null,
+   "email": "advisor@demo.edu",
+   "name": "Dr. Advisor",
+   "created_at": "2026-10-16T17:47:57.028148+00:00"
+  }
+ ],
+ "GET /users?role=coordinator": [
+  {
+   "id": 4,
+   "campus_id": 1,
+   "campus_name": "Rathinam",
+   "role": "coordinator",
+   "student_code": null,
+   "email": "coord@demo.edu",
+   "name": "Robotics Coordinator",
+   "created_at": "2026-10-16T17:47:57.028619+00:00"
+  }
+ ],
+ "GET /clubs/1/memberships": [
+  {
+   "id": 1,
+   "student_id": 5,
+   "club_id": 1,
+   "type": "primary",
+   "status": "approved",
+   "decided_by": 4,
+   "decided_at": "2026-10-16T18:09:49.239086+00:00",
+   "created_at": "2026-10-16T18:09:49.231811+00:00",
+   "student_name": "Student One",
+   "student_code": "S001"
+  }
+ ],
+ "GET /club-days": [
+  {
+   "id": 11,
+   "club_id": 9,
+   "day_date": "2026-12-02",
+   "title": "Import B 174214",
+   "status": "planned",
+   "submission_deadline": null,
+   "created_by": 4,
+   "start_time": null,
+   "end_time": null,
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Mirai Smoke 174214 B",
+   "club_active": true,
+   "plan_body": null,
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null,
+   "plan_status": null,
+   "plan_updated_at": null,
+   "plan_submitted_at": null,
+   "plan_decided_at": null,
+   "plan_decision_reason": null,
+   "plan_decided_by_name": null
+  },
+  {
+   "id": 8,
+   "club_id": 6,
+   "day_date": "2026-12-02",
+   "title": "Import B 174196",
+   "status": "planned",
+   "submission_deadline": null,
+   "created_by": 4,
+   "start_time": null,
+   "end_time": null,
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Mirai Smoke 174196 B",
+   "club_active": true,
+   "plan_body": null,
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null,
+   "plan_status": null,
+   "plan_updated_at": null,
+   "plan_submitted_at": null,
+   "plan_decided_at": null,
+   "plan_decision_reason": null,
+   "plan_decided_by_name": null
+  },
+  {
+   "id": 5,
+   "club_id": 3,
+   "day_date": "2026-12-02",
+   "title": "Import B 174189",
+   "status": "planned",
+   "submission_deadline": null,
+   "created_by": 4,
+   "start_time": null,
+   "end_time": null,
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Mirai Smoke 174189 B",
+   "club_active": true,
+   "plan_body": null,
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null,
+   "plan_status": null,
+   "plan_updated_at": null,
+   "plan_submitted_at": null,
+   "plan_decided_at": null,
+   "plan_decision_reason": null,
+   "plan_decided_by_name": null
+  },
+  {
+   "id": 10,
+   "club_id": 9,
+   "day_date": "2026-11-25",
+   "title": "Import A 174214",
+   "status": "planned",
+   "submission_deadline": "2026-11-25T14:30:00+00:00",
+   "created_by": 4,
+   "start_time": "16:00:00",
+   "end_time": "18:00:00",
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Mirai Smoke 174214 B",
+   "club_active": true,
+   "plan_body": null,
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null,
+   "plan_status": null,
+   "plan_updated_at": null,
+   "plan_submitted_at": null,
+   "plan_decided_at": null,
+   "plan_decision_reason": null,
+   "plan_decided_by_name": null
+  },
+  {
+   "id": 7,
+   "club_id": 6,
+   "day_date": "2026-11-25",
+   "title": "Import A 174196",
+   "status": "planned",
+   "submission_deadline": "2026-11-25T14:30:00+00:00",
+   "created_by": 4,
+   "start_time": "16:00:00",
+   "end_time": "18:00:00",
+   "rescheduled_at": null,
+   "schedule_version": 1,
+   "club_name": "Mirai Smoke 174196 B",
+   "club_active": true,
+   "plan_body": null,
+   "plan_topic": null,
+   "plan_format": null,
+   "plan_deliverable": null,
+   "plan_venue": null,
+   "plan_status": null,
+   "plan_updated_at": null,
+   "plan_submitted_at": null,
+   "plan_decided_at": null,
+   "plan_decision_reason": null,
+   "plan_decided_by_name": null
+  }
+ ],
+ "GET /checkin/sessions?limit=100": {
+  "total": 3,
+  "items": [
+   {
+    "id": 3,
+    "club_day_id": 9,
+    "club_id": 9,
+    "club_name": "Mirai Smoke 174214 B",
+    "club_day_title": "Plan flow",
+    "day_date": "2026-10-18",
+    "start_time": "15:00:00",
+    "end_time": "17:00:00",
+    "club_day_status": "submissions",
+    "opens_at": "2026-10-16T18:10:16.777740+00:00",
+    "closes_at": "2026-10-16T18:10:16.813424+00:00",
+    "late_after": "2026-10-16T18:20:16.777740+00:00",
+    "geo_required": false,
+    "geo_radius_m": null,
+    "status": "closed",
+    "checked_in": 1,
+    "late": 0,
+    "geo_flagged": 0,
+    "corrected": 0,
+    "eligible_members": 1,
+    "opened_by_name": "Robotics Coordinator",
+    "closed_by_name": "Robotics Coordinator"
+   },
+   {
+    "id": 2,
+    "club_day_id": 6,
+    "club_id": 6,
+    "club_name": "Mirai Smoke 174196 B",
+    "club_day_title": "Plan flow",
+    "day_date": "2026-10-18",
+    "start_time": "15:00:00",
+    "end_time": "17:00:00",
+    "club_day_status": "submissions",
+    "opens_at": "2026-10-16T18:09:58.400403+00:00",
+    "closes_at": "2026-10-16T18:09:58.434341+00:00",
+    "late_after": "2026-10-16T18:19:58.400403+00:00",
+    "geo_required": false,
+    "geo_radius_m": null,
+    "status": "closed",
+    "checked_in": 1,
+    "late": 0,
+    "geo_flagged": 0,
+    "corrected": 0,
+    "eligible_members": 1,
+    "opened_by_name": "Robotics Coordinator",
+    "closed_by_name": "Robotics Coordinator"
+   },
+   {
+    "id": 1,
+    "club_day_id": 3,
+    "club_id": 3,
+    "club_name": "Mirai Smoke 174189 B",
+    "club_day_title": "Plan flow",
+    "day_date": "2026-10-18",
+    "start_time": "15:00:00",
+    "end_time": "17:00:00",
+    "club_day_status": "submissions",
+    "opens_at": "2026-10-16T18:09:51.744348+00:00",
+    "closes_at": "2026-10-16T18:09:51.778297+00:00",
+    "late_after": "2026-10-16T18:19:51.744348+00:00",
+    "geo_required": false,
+    "geo_radius_m": null,
+    "status": "closed",
+    "checked_in": 1,
+    "late": 0,
+    "geo_flagged": 0,
+    "corrected": 0,
+    "eligible_members": 1,
+    "opened_by_name": "Robotics Coordinator",
+    "closed_by_name": "Robotics Coordinator"
+   }
+  ]
+ },
+ "GET /checkin/sessions?status=live&limit=20": {
+  "total": 0,
+  "items": []
+ },
+ "GET /club-days/9/grading-roster": {
+  "club_day": {
+   "id": 9,
+   "club_id": 9,
+   "club_name": "Mirai Smoke 174214 B",
+   "title": "Plan flow",
+   "day_date": "2026-10-18",
+   "status": "submissions",
+   "submission_deadline": null,
+   "scoring_open": true
+  },
+  "rubric": [
+   {
+    "key": "content",
+    "max_score": 5
+   },
+   {
+    "key": "presentation",
+    "max_score": 5
+   },
+   {
+    "key": "participation",
+    "max_score": 5
+   }
+  ],
+  "counts": {
+   "not_submitted": 0,
+   "pending": 0,
+   "graded": 1,
+   "resubmission_requested": 0
+  },
+  "students": [
+   {
+    "student_id": 13,
+    "student_name": "Smoke Student 174214",
+    "student_code": "SMK174214",
+    "status": "graded",
+    "submissions": [
+     {
+      "id": 9,
+      "club_day_id": 9,
+      "student_id": 13,
+      "kind": "link",
+      "url": "https://example.org/flight-log",
+      "original_filename": null,
+      "size_bytes": null,
+      "sha256": null,
+      "submitted_at": "2026-10-16T18:10:16.824621+00:00",
+      "is_late": false,
+      "evaluation": {
+       "scores": {
+        "content": 3,
+        "presentation": 3,
+        "participation": 3
+       },
+       "total": 9,
+       "max_total": 15,
+       "comment": "Add the battery log",
+       "status": "resubmission_requested",
+       "evaluated_at": "2026-10-16T18:10:16.832112+00:00",
+       "evaluator": "Robotics Coordinator"
+      }
+     },
+     {
+      "id": 10,
+      "club_day_id": 9,
+      "student_id": 13,
+      "kind": "link",
+      "url": "https://example.org/flight-log-v2",
+      "original_filename": null,
+      "size_bytes": null,
+      "sha256": null,
+      "submitted_at": "2026-10-16T18:10:16.849780+00:00",
+      "is_late": false,
+      "evaluation": {
+       "scores": {
+        "content": 3,
+        "presentation": 3,
+        "participation": 3
+       },
+       "total": 9,
+       "max_total": 15,
+       "comment": "Good",
+       "status": "graded",
+       "evaluated_at": "2026-10-16T18:10:16.853101+00:00",
+       "evaluator": "Robotics Coordinator"
+      }
+     }
+    ],
+    "latest": {
+     "id": 10,
+     "club_day_id": 9,
+     "student_id": 13,
+     "kind": "link",
+     "url": "https://example.org/flight-log-v2",
+     "original_filename": null,
+     "size_bytes": null,
+     "sha256": null,
+     "submitted_at": "2026-10-16T18:10:16.849780+00:00",
+     "is_late": false,
+     "evaluation": {
+      "scores": {
+       "content": 3,
+       "presentation": 3,
+       "participation": 3
+      },
+      "total": 9,
+      "max_total": 15,
+      "comment": "Good",
+      "status": "graded",
+      "evaluated_at": "2026-10-16T18:10:16.853101+00:00",
+      "evaluator": "Robotics Coordinator"
+     }
+    }
+   }
+  ]
+ },
+ "GET /club-days/11/certificates": [],
+ "GET /events": [],
+ "GET /budgets": [
+  {
+   "id": 3,
+   "club_id": 1,
+   "requester_id": 4,
+   "title": "Sensors 174214",
+   "description": "Parts",
+   "amount": 1500,
+   "currency": "INR",
+   "status": "approved",
+   "decided_by": 2,
+   "decided_at": "2026-10-16T18:10:16.875191+00:00",
+   "decision_reason": "Within limit",
+   "created_at": "2026-10-16T18:10:16.871839+00:00",
+   "club_name": "Robotics",
+   "campus_name": "Rathinam",
+   "requester_name": "Robotics Coordinator",
+   "requester_role": "coordinator",
+   "decided_by_name": "Rathinam Campus Admin",
+   "decided_by_role": "campus_admin"
+  },
+  {
+   "id": 2,
+   "club_id": 1,
+   "requester_id": 4,
+   "title": "Sensors 174196",
+   "description": "Parts",
+   "amount": 1500,
+   "currency": "INR",
+   "status": "approved",
+   "decided_by": 2,
+   "decided_at": "2026-10-16T18:09:58.494002+00:00",
+   "decision_reason": "Within limit",
+   "created_at": "2026-10-16T18:09:58.490860+00:00",
+   "club_name": "Robotics",
+   "campus_name": "Rathinam",
+   "requester_name": "Robotics Coordinator",
+   "requester_role": "coordinator",
+   "decided_by_name": "Rathinam Campus Admin",
+   "decided_by_role": "campus_admin"
+  },
+  {
+   "id": 1,
+   "club_id": 1,
+   "requester_id": 4,
+   "title": "Sensors 174189",
+   "description": "Parts",
+   "amount": 1500,
+   "currency": "INR",
+   "status": "approved",
+   "decided_by": 2,
+   "decided_at": "2026-10-16T18:09:51.835507+00:00",
+   "decision_reason": "Within limit",
+   "created_at": "2026-10-16T18:09:51.831971+00:00",
+   "club_name": "Robotics",
+   "campus_name": "Rathinam",
+   "requester_name": "Robotics Coordinator",
+   "requester_role": "coordinator",
+   "decided_by_name": "Rathinam Campus Admin",
+   "decided_by_role": "campus_admin"
+  }
+ ],
+ "GET /duty-leave": [],
+ "GET /admin/notifications?limit=50&offset=0": {
+  "total": 28,
+  "limit": 50,
+  "offset": 0,
+  "in_app": {
+   "total": 28,
+   "delivered": 18,
+   "read": 0,
+   "cancelled": 3
+  },
+  "deliveries": [
+   {
+    "channel": "email",
+    "status": "failed",
+    "n": 3
+   }
+  ],
+  "items": [
+   {
+    "id": 31,
+    "kind": "budget.approved",
+    "payload": {
+     "title": "Sensors 174214",
+     "amount": "1500.00",
+     "reason": "Within limit",
+     "currency": "INR",
+     "budget_id": 3,
+     "club_name": "Robotics",
+     "decided_by_name": "Rathinam Campus Admin"
+    },
+    "send_at": "2026-10-16T18:10:16.875191+00:00",
+    "sent_at": null,
+    "read_at": null,
+    "cancelled_at": null,
+    "recipient_id": 4,
+    "recipient_name": "Robotics Coordinator",
+    "recipient_role": "coordinator",
+    "recipient_campus": "Rathinam",
+    "deliveries": []
+   },
+   {
+    "id": 30,
+    "kind": "submission.resubmission_requested",
+    "payload": {
+     "title": "Plan flow",
+     "comment": "Add the battery log",
+     "day_date": "2026-10-18",
+     "club_name": "Mirai Smoke 174214 B",
+     "club_day_id": 9,
+     "submission_id": 9
+    },
+    "send_at": "2026-10-16T18:10:16.832112+00:00",
+    "sent_at": null,
+    "read_at": null,
+    "cancelled_at": null,
+    "recipient_id": 13,
+    "recipient_name": "Smoke Student 174214",
+    "recipient_role": "student",
+    "recipient_campus": "Rathinam",
+    "deliveries": []
+   },
+   {
+    "id": 28,
+    "kind": "club_day.upcoming",
+    "payload": {
+     "title": "Plan flow",
+     "topic": "Drones",
+     "venue": "Field",
+     "format": "Workshop",
+     "club_id": 9,
+     "day_date": "2026-10-18",
+     "deadline": null,
+     "end_time": "17:00",
+     "club_name": "Mirai Smoke 174214 B",
+     "start_time": "15:00",
+     "club_day_id": 9,
+     "deliverable": "Flight log"
+    },
+    "send_at": "2026-10-16T18:10:16.738923+00:00",
+    "sent_at": null,
+    "read_at": null,
+    "cancelled_at": null,
+    "recipient_id": 13,
+    "recipient_name": "Smoke Student 174214",
+    "recipient_role": "student",
+    "recipient_campus": "Rathinam",
+    "deliveries": []
+   },
+   {
+    "id": 27,
+    "kind": "club_day.rescheduled",
+    "payload": {
+     "title": "Plan flow",
+     "reason": "Lab booked",
+     "club_id": 9,
+     "version": 2,
+     "day_date": "2026-10-18",
+     "deadline": null,
+     "end_time": "17:00",
+     "club_name": "Mirai Smoke 174214 B",
+     "start_time": "15:00",
+     "club_day_id": 9,
+     "previous_day_date": "2026-10-28"
+    },
+    "send_at": "2026-10-16T18:10:16.559374+00:00",
+    "sent_at": null,
+    "read_at": null,
+    "cancelled_at": null,
+    "recipient_id": 13,
+    "recipient_name": "Smoke Student 174214",
+    "recipient_role": "student",
+    "recipient_campus": "Rathinam",
+    "deliveries": []
+   },
+   {
+    "id": 26,
+    "kind": "club_day.rescheduled",
+    "payload": {
+     "title": "Plan flow",
+     "reason": "Lab booked",
+     "club_id": 9,
+     "version": 2,
+     "day_date": "2026-10-18",
+     "deadline": null,
+     "end_time": "17:00",
+     "club_name": "Mirai Smoke 174214 B",
+     "start_time": "15:00",
+     "club_day_id": 9,
+     "previous_day_date": "2026-10-28"
+    },
+    "send_at": "2026-10-16T18:10:16.559374+00:00",
+    "sent_at": null,
+    "read_at": null,
+    "cancelled_at": null,
+    "recipient_id": 3,
+    "recipient_name": "Dr. Advisor",
+    "recipient_role": "advisor",
+    "recipient_campus": "Rathinam",
+    "deliveries": [
+     {
+      "status": "failed",
+      "channel": "email",
+      "sent_at": null,
+      "attempts": 5,
+      "error_code": "smtp_auth_failed",
+      "updated_at": "2026-10-16T18:10:17.18767+00:00"
+     }
+    ]
+   }
+  ]
+ },
+ "GET /notifications?limit=100": {
+  "unread_count": 0,
+  "items": []
+ },
+ "GET /notifications/email-preference": {
+  "enabled": true,
+  "available": false
+ },
+ "GET /notifications/whatsapp-preference": {
+  "enabled": false,
+  "phone_last4": null,
+  "opted_in_at": null
+ },
+ "GET /auth/me": {
+  "id": 1,
+  "role": "super_admin",
+  "campus_id": null,
+  "name": "Super Admin",
+  "email": "super@demo.edu",
+  "student_code": null,
+  "campus_name": null,
+  "permissions": [
+   "budget.decide",
+   "budget.request",
+   "campus.create",
+   "checkin.run",
+   "checkin.view",
+   "club.approve",
+   "club.coordinators",
+   "club.create",
+   "club.deactivate",
+   "club.delete",
+   "club.edit",
+   "club.view",
+   "club_day.create",
+   "club_day.import",
+   "club_day.plan.decide",
+   "club_day.plan.edit",
+   "club_day.reschedule",
+   "club_day.transition",
+   "dashboard.view",
+   "duty_leave.decide",
+   "event.manage",
+   "event.reschedule",
+   "membership.decide",
+   "notification.history",
+   "submission.grade",
+   "submission.view_all",
+   "transcript.view_any",
+   "user.manage"
+  ]
+ }
+}

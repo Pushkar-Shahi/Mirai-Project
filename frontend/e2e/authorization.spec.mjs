@@ -47,7 +47,7 @@ test('a campus manager token cannot create campuses or see another campus', asyn
   const r = await m.post('/users', {name: 'X', email: `x-${Date.now()}@example.test`, password: 'long-enough-pw', role: 'super_admin'});
   expect(r.status(), 'campus managers cannot create admin accounts').toBe(403);
   const users = await (await m.get('/users')).json();
-  expect(users.every(u => u.campus_name === 'Main Campus'), 'directory is campus-scoped').toBe(true);
+  expect(users.every(u => u.campus_name === 'Rathinam'), 'directory is campus-scoped').toBe(true);
 });
 
 test('forged or altered tokens are rejected', async ({request}) => {

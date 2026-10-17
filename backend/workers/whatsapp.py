@@ -22,6 +22,13 @@ SEND_CONCURRENCY = 5
 
 
 def whatsapp_config():
+    bridge_url = os.getenv("WHATSAPP_BRIDGE_URL", "").strip().rstrip("/")
+    if bridge_url:
+        return {
+            "mode": "bridge",
+            "url": f"{bridge_url}/send",
+            "status_url": f"{bridge_url}/status",
+        }
     token = os.getenv("WHATSAPP_ACCESS_TOKEN", "").strip()
     phone_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "").strip()
     version = os.getenv("WHATSAPP_GRAPH_API_VERSION", "").strip()
@@ -36,6 +43,7 @@ def whatsapp_config():
         log.error("WhatsApp delivery disabled: invalid phone number ID setting")
         return None
     return {
+        "mode": "cloud",
         "token": token,
         "url": f"https://graph.facebook.com/{version}/{phone_id}/messages",
         "template": template,
@@ -153,6 +161,26 @@ async def _record_failure(conn, row: dict, code: str):
 
 async def _send_one(client: httpx.AsyncClient, config: dict, row: dict):
     title, detail = template_parameters(row["kind"], row["payload"] or {})
+    if config.get("mode") == "bridge":
+        try:
+            response = await client.post(
+                config["url"],
+                json={"to": row["phone_e164"], "message": f"*{title}*\n{detail}"},
+            )
+            if response.is_success:
+                data = response.json()
+                return data.get("id"), None
+            error_msg = f"http_{response.status_code}"
+            try:
+                error_msg = response.json().get("error") or error_msg
+            except Exception:
+                pass
+            return None, error_msg[:80]
+        except httpx.TimeoutException:
+            return None, "request_timeout"
+        except httpx.RequestError:
+            return None, "network_error"
+
     body = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",

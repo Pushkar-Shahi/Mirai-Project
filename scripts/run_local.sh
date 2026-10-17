@@ -82,6 +82,13 @@ if [[ "${1:-}" == "--demo" ]]; then
   (cd "$ROOT/backend" && "$PYTHON_BIN" -m scripts.seed)
 fi
 
+export WHATSAPP_BRIDGE_URL="${WHATSAPP_BRIDGE_URL:-http://127.0.0.1:3001}"
+BRIDGE_PID=""
+if ! lsof -i :3001 >/dev/null 2>&1 && [[ -f "$ROOT/whatsapp-bridge/server.mjs" ]]; then
+  (cd "$ROOT/whatsapp-bridge" && node server.mjs) &
+  BRIDGE_PID=$!
+fi
+
 API_HOST="${API_HOST:-0.0.0.0}"
 API_PORT="${API_PORT:-8000}"
 WEB_HOST="${WEB_HOST:-0.0.0.0}"
@@ -91,12 +98,13 @@ API_PID=$!
 (cd "$ROOT/frontend" && "$PYTHON_BIN" -m http.server "$WEB_PORT" --bind "$WEB_HOST") &
 WEB_PID=$!
 cleanup() {
-  kill "$API_PID" "$WEB_PID" 2>/dev/null || true
-  wait "$API_PID" "$WEB_PID" 2>/dev/null || true
+  kill "$API_PID" "$WEB_PID" ${BRIDGE_PID:-} 2>/dev/null || true
+  wait "$API_PID" "$WEB_PID" ${BRIDGE_PID:-} 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
 
 echo "${APP_NAME:-Mirai Club Activities Tracker} is starting in local mode."
+echo "WhatsApp Bridge: http://127.0.0.1:3001/ (link device via QR code)"
 echo "Role portals (served from source; each is built and deployed separately in production):"
 for portal in super-admin campus-manager advisor coordinator student; do
   echo "  http://127.0.0.1:$WEB_PORT/apps/$portal/"

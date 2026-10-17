@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from app import db, redis_client
 from app.config import settings
 from app.core.cors import add_cors, allows_any_origin
+from app.core.errors import add_error_boundary
 from app.core.state_machines import InvalidTransition
 from app.routers import (
     admin, auth, certificates, checkin, club_days, clubs, health, memberships,
@@ -24,6 +25,23 @@ async def _run_migrations():
     async with db.pool.acquire() as conn:
         done = await apply_migrations(conn)
     log.info("database migrations: %s", ", ".join(done) if done else "up to date")
+
+
+async def _require_current_schema():
+    """AUTO_MIGRATE=0: refuse to serve traffic on a database that is behind the code.
+
+    Without this the API started "healthy" and every page that touched a newer table
+    (notifications, clubs, check-in, grading, dashboards) failed with a 500 at request time.
+    """
+    from app.migrate import pending_migrations
+
+    async with db.pool.acquire() as conn:
+        pending = await pending_migrations(conn)
+    if pending:
+        raise RuntimeError(
+            "The database schema is behind the code (pending: " + ", ".join(pending) + "). "
+            "Run `python -m app.migrate` or start with AUTO_MIGRATE=1."
+        )
 
 
 @asynccontextmanager
@@ -48,6 +66,12 @@ async def lifespan(app: FastAPI):
             except Exception:
                 log.exception("startup failed: database migrations")
                 raise
+        else:
+            try:
+                await _require_current_schema()
+            except Exception:
+                log.exception("startup failed: database schema out of date")
+                raise
         await redis_client.init_redis()
         if settings.app_mode == "local":
             from app.local_workers import start_local_workers
@@ -64,6 +88,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
+add_error_boundary(app)  # must be added before CORS so CORS headers wrap error responses
 add_cors(app, settings)
 
 
