@@ -607,6 +607,29 @@ async def move_club_day(
             entity="club_days", entity_id=club_day_id,
             before={"status": day["status"]}, after={"status": new_status},
         )
+        if new_status == "announced":
+            club = await conn.fetchrow("SELECT * FROM clubs WHERE id=$1", day["club_id"])
+            plan = await conn.fetchrow("SELECT * FROM activity_plans WHERE club_day_id=$1", club_day_id)
+            members = await club_member_ids(conn, day["club_id"])
+            await notify_users(
+                conn, members, "club_day.announced",
+                {
+                    "club_day_id": club_day_id,
+                    "club_id": day["club_id"],
+                    "club_name": club["name"] if club else "",
+                    "day_date": day["day_date"],
+                    "start_time": day["start_time"].strftime("%H:%M") if day["start_time"] else None,
+                    "end_time": day["end_time"].strftime("%H:%M") if day["end_time"] else None,
+                    "title": day["title"],
+                    "deadline": day["submission_deadline"],
+                    "topic": plan["topic"] if plan else None,
+                    "format": plan["format"] if plan else None,
+                    "deliverable": plan["deliverable"] if plan else None,
+                    "venue": plan["venue"] if plan else None,
+                },
+                f"club_day.announced:{club_day_id}",
+                actor_id=user["id"],
+            )
     # drop cached copies AFTER commit so the scan path re-reads the new closes_at
     for sid in closed_sessions:
         await checkin.invalidate_session(sid)

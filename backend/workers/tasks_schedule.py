@@ -54,7 +54,7 @@ async def _announce(conn) -> int:
         )
         for d in days:
             await conn.execute(
-                f"""INSERT INTO notifications (user_id, kind, payload, dedupe_key)
+                f"""INSERT INTO notifications (user_id, kind, payload, dedupe_key, sent_at)
                    SELECT m.student_id, 'club_day.announced',
                           jsonb_build_object('club_day_id', d.id, 'club_id', c.id,
                                              'club_name', c.name, 'day_date', d.day_date,
@@ -63,9 +63,11 @@ async def _announce(conn) -> int:
                                              'title', d.title, 'deadline', d.submission_deadline,
                                              'topic', p.topic, 'format', p.format,
                                              'deliverable', p.deliverable, 'venue', p.venue),
-                          {_versioned('club_day.announced')} || ':' || m.student_id::text
+                          {_versioned('club_day.announced')} || ':' || m.student_id::text,
+                          now()
                    FROM club_days d JOIN clubs c ON c.id = d.club_id
-                   JOIN club_memberships m ON m.club_id = c.id AND m.status = 'approved'
+                   JOIN club_memberships m ON m.club_id = c.id AND m.status = 'approved' AND m.type IN ('primary', 'secondary')
+                   JOIN users u ON u.id = m.student_id AND u.campus_id = c.campus_id
                    LEFT JOIN activity_plans p ON p.club_day_id = d.id
                    WHERE d.id = $1
                    ON CONFLICT (dedupe_key) WHERE dedupe_key IS NOT NULL DO NOTHING""",

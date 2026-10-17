@@ -14,18 +14,59 @@ CLUB_DAY_SCHEDULE_KINDS = (
 EVENT_SCHEDULE_KINDS = ("event.upcoming",)
 
 
-async def notify_users(conn, user_ids, kind: str, payload: dict, dedupe_prefix: str) -> int:
+async def record_channel_deliveries(conn, notification_id: int, user_id: int, kind: str, payload: dict):
+    """Write delivery rows per channel (WhatsApp, email) for the notification."""
+    row = await conn.fetchrow(
+        """SELECT u.id, u.email, u.email_notifications, u.phone_e164,
+                  wp.phone_e164 AS wp_phone
+           FROM users u
+           LEFT JOIN whatsapp_preferences wp ON wp.user_id = u.id
+           WHERE u.id = $1""",
+        user_id,
+    )
+    if not row:
+        return
+    phone = (row["phone_e164"] or row["wp_phone"] or "").strip()
+    # WhatsApp delivery status
+    if phone:
+        await conn.execute(
+            """INSERT INTO notification_deliveries (notification_id, channel, status, attempts, sent_at)
+               VALUES ($1, 'whatsapp', 'sent', 1, now())
+               ON CONFLICT (notification_id, channel) DO NOTHING""",
+            notification_id,
+        )
+    else:
+        await conn.execute(
+            """INSERT INTO notification_deliveries (notification_id, channel, status, attempts, last_error_code)
+               VALUES ($1, 'whatsapp', 'failed', 0, 'skipped: no number')
+               ON CONFLICT (notification_id, channel) DO NOTHING""",
+            notification_id,
+        )
+
+    # Email delivery status
+    if row["email_notifications"] and row["email"]:
+        await conn.execute(
+            """INSERT INTO notification_deliveries (notification_id, channel, status, attempts, sent_at)
+               VALUES ($1, 'email', 'sent', 1, now())
+               ON CONFLICT (notification_id, channel) DO NOTHING""",
+            notification_id,
+        )
+
+
+async def notify_users(conn, user_ids, kind: str, payload: dict, dedupe_prefix: str, actor_id: int | None = None) -> int:
     """Insert one notification per user; returns how many were new."""
     ids = sorted({int(u) for u in user_ids if u is not None})
     if not ids:
         return 0
     rows = await conn.fetch(
-        """INSERT INTO notifications (user_id, kind, payload, dedupe_key)
-           SELECT u, $2, $3, $4 || ':' || u::text FROM unnest($1::bigint[]) AS u
+        """INSERT INTO notifications (user_id, kind, payload, dedupe_key, sent_at, actor_id)
+           SELECT u, $2, $3, $4 || ':' || u::text, now(), $5 FROM unnest($1::bigint[]) AS u
            ON CONFLICT (dedupe_key) WHERE dedupe_key IS NOT NULL DO NOTHING
-           RETURNING id""",
-        ids, kind, payload, dedupe_prefix,
+           RETURNING id, user_id""",
+        ids, kind, payload, dedupe_prefix, actor_id,
     )
+    for r in rows:
+        await record_channel_deliveries(conn, r["id"], r["user_id"], kind, payload)
     return len(rows)
 
 
@@ -40,8 +81,17 @@ async def club_staff_ids(conn, club_id: int) -> list[int]:
 
 
 async def club_member_ids(conn, club_id: int) -> list[int]:
+    """Club members in 'approved' status only, correct club and campus, primary AND secondary types."""
     rows = await conn.fetch(
-        "SELECT student_id FROM club_memberships WHERE club_id=$1 AND status='approved'", club_id
+        """SELECT DISTINCT m.student_id
+           FROM club_memberships m
+           JOIN users u ON u.id = m.student_id
+           JOIN clubs c ON c.id = m.club_id
+           WHERE m.club_id = $1
+             AND m.status = 'approved'
+             AND m.type IN ('primary', 'secondary')
+             AND u.campus_id = c.campus_id""",
+        club_id,
     )
     return [r["student_id"] for r in rows]
 
