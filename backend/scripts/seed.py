@@ -48,11 +48,35 @@ async def main():
                VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING""",
             rathinam_id, name, cap, advisor_id,
         )
+    # chill club at Hitech
+    await conn.execute(
+        """INSERT INTO clubs (campus_id, name, capacity)
+           VALUES ($1, 'chill', 20) ON CONFLICT DO NOTHING""",
+        hitech_id,
+    )
     robotics = await conn.fetchval("SELECT id FROM clubs WHERE name='Robotics'")
+    coding_club = await conn.fetchval("SELECT id FROM clubs WHERE name='Coding Club'")
+    s001_id = await conn.fetchval("SELECT id FROM users WHERE email='s001@demo.edu'")
+
     await conn.execute(
         "INSERT INTO club_coordinators (club_id, user_id) VALUES ($1,$2) ON CONFLICT DO NOTHING",
         robotics, coord_id,
     )
+    if s001_id and robotics and coding_club:
+        # Robotics: Student One as primary (pending)
+        await conn.execute(
+            """INSERT INTO club_memberships (student_id, club_id, type, status)
+               VALUES ($1, $2, 'primary', 'pending')
+               ON CONFLICT (student_id, club_id) WHERE status IN ('pending','approved') DO NOTHING""",
+            s001_id, robotics,
+        )
+        # Coding Club: Student One as secondary (approved)
+        await conn.execute(
+            """INSERT INTO club_memberships (student_id, club_id, type, status)
+               VALUES ($1, $2, 'secondary', 'approved')
+               ON CONFLICT (student_id, club_id) WHERE status IN ('pending','approved') DO NOTHING""",
+            s001_id, coding_club,
+        )
     await conn.close()
     print("Seeded. Login e.g. s001@demo.edu / password123")
 

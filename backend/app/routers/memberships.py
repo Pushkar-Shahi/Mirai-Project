@@ -51,8 +51,10 @@ async def club_memberships(
 ):
     await assert_club_access(conn, user, club_id)
     rows = await conn.fetch(
-        """SELECT m.*, u.name AS student_name, u.student_code
-           FROM club_memberships m JOIN users u ON u.id = m.student_id
+        """SELECT m.*, u.name AS student_name, u.student_code, ca.name AS student_campus
+           FROM club_memberships m
+           JOIN users u ON u.id = m.student_id
+           LEFT JOIN campus ca ON ca.id = u.campus_id
            WHERE m.club_id=$1 AND ($2::text IS NULL OR m.status=$2)
            ORDER BY m.created_at""",
         club_id, status,
