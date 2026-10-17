@@ -1,11 +1,15 @@
 {
   "private": true,
   "scripts": {
+    "start": "serve dist-portals -s -l ${PORT:-5500}",
     "build": "node scripts/build-all-portals.mjs",
     "cf:dev": "wrangler dev",
     "cf:deploy": "wrangler deploy",
     "test:all": "node scripts/test-all.mjs",
     "whatsapp:bridge": "node whatsapp-bridge/server.mjs"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "wrangler": "^4.136.0"

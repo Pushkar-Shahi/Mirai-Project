@@ -15,13 +15,11 @@ import {buildPortal} from '../frontend/scripts/build-portal.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.resolve(process.env.OUTPUT_DIR || path.join(ROOT, 'dist-portals'));
-const API_URL = process.env.MIRAI_API_BASE_URL;
+const API_URL = (process.env.MIRAI_API_BASE_URL && process.env.MIRAI_API_BASE_URL.trim())
+  || 'https://club-tracker-demo-api.onrender.com';
 const PORTALS = ['student', 'campus-manager', 'super-admin', 'advisor', 'coordinator'];
 
 async function main() {
-  if (!API_URL || !API_URL.trim()) {
-    throw new Error('MIRAI_API_BASE_URL is not set. Set it to the Mirai API (for example https://api.example.edu); there is no default.');
-  }
   console.log(`Building the sign-in site and ${PORTALS.length} portals`);
   console.log(`API URL: ${API_URL}`);
   console.log(`Output:  ${OUT_DIR}`);
