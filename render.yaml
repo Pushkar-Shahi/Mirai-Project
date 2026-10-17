@@ -30,10 +30,7 @@ services:
       # The five role portals are static sites on Cloudflare Pages
       # (docs/CLOUDFLARE_DEPLOYMENT.md). List their exact origins, comma-separated.
       - key: CORS_ORIGINS
-        sync: false
-      # Optional: a pattern for Cloudflare Pages preview deployments.
-      - key: CORS_ORIGIN_REGEX
-        sync: false
+        value: "*"
       - key: PUBLIC_BASE_URL
         fromService:
           name: club-tracker-demo-api
