@@ -264,6 +264,7 @@ function headersFile(portal, api) {
   Referrer-Policy: strict-origin-when-cross-origin
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(${student ? 'self' : ''}), geolocation=(${student ? 'self' : ''}), microphone=(), payment=(), usb=()
+  Cache-Control: public, max-age=0, must-revalidate
 `;
 }
 
