@@ -897,13 +897,13 @@ body.mirai-auth-body {
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100vh;
   min-height: 100dvh;
 }
@@ -1060,6 +1060,23 @@ textarea,
 }
 
 /* --------------------------------------------------------------------------
+   DESKTOP & TABLET SIDEBAR STICKY LOCK (Screen width >= 769px)
+   Keeps the sidebar securely anchored to the viewport when scrolling
+   -------------------------------------------------------------------------- */
+@media (min-width: 769px) {
+  .sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    z-index: 50 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
    3. TABLETS & FOLDABLES (769px to 1180px, iPad, Galaxy Tab, Surface)
    -------------------------------------------------------------------------- */
 @media (min-width: 769px) and (max-width: 1180px) {
@@ -1095,9 +1112,9 @@ textarea,
 }
 
 /* --------------------------------------------------------------------------
-   4. LANDSCAPE MOBILE & FOLDABLE TILT (@media max-height: 520px)
+   4. LANDSCAPE MOBILE & FOLDABLE TILT (@media max-height: 520px and max-width: 768px)
    -------------------------------------------------------------------------- */
-@media (max-height: 520px) and (orientation: landscape) {
+@media (max-height: 520px) and (max-width: 768px) and (orientation: landscape) {
   .topbar {
     height: 48px !important;
   }
