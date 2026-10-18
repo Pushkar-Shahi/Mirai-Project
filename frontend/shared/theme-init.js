@@ -35,7 +35,7 @@
     if (!document.querySelector('meta[name="theme-color"]')) {
       var tc = document.createElement('meta');
       tc.name = 'theme-color';
-      tc.content = '#060814';
+      tc.content = (t === 'light') ? '#f5f7fb' : '#060814';
       head.appendChild(tc);
     }
 
