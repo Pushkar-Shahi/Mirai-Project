@@ -1,5 +1,5 @@
 // Mirai PWA Service Worker v1.0.0
-const CACHE_NAME = 'mirai-pwa-v1.0.0';
+const CACHE_NAME = 'mirai-pwa-v1.0.2';
 const CORE_ASSETS = [
   './',
   './shared/styles/app.css',
